@@ -1,0 +1,62 @@
+---
+import Layout from '../layouts/Layout.astro';
+import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
+---
+
+<Layout title="About | Pierre Kattar">
+  <Header />
+  <main style="min-height:100vh;padding:9rem 2rem 5rem;">
+
+    <div style="max-width:1100px;margin:0 auto;display:grid;grid-template-columns:1fr 480px;gap:5rem;align-items:start;">
+
+      <!-- Text -->
+      <div>
+        <!-- Intro -->
+        <p style="font-family:Arial,Helvetica,sans-serif;font-size:1.2rem;line-height:1.8;color:#ffffff;margin-bottom:3.5rem;">
+          I'm an Emmy award-winning video journalist and documentary filmmaker. I thrive on the ground — hashing out the next shot, chasing the ever-changing thread of a story. People tell me they feel comfortable in front of my camera, which might be the credential I'm most proud of. My clients include The New York Times, NPR, PBS, and The World Bank.
+        </p>
+
+        <!-- Stories I've Told -->
+        <div style="margin-bottom:3rem;">
+          <h2 style="font-family:Arial,Helvetica,sans-serif;font-size:0.9rem;letter-spacing:0.3em;color:rgba(255,255,255,0.55);text-transform:uppercase;margin-bottom:1rem;">Stories I've Told</h2>
+          <p style="font-family:Arial,Helvetica,sans-serif;font-size:1rem;line-height:1.8;color:rgba(255,255,255,0.85);">
+            I've reported from Libya's secret migrant prisons, Barack Obama's first presidential campaign, the Charlie Hebdo attacks in Paris, a Hepatitis E epidemic in Nepal, and the streets of Italy during the Black Lives Matter movement. My work has aired on public television, screened at film festivals, and been exhibited at the 2025 Venice Biennale.
+          </p>
+        </div>
+
+        <!-- How I Got Here -->
+        <div style="margin-bottom:3rem;">
+          <h2 style="font-family:Arial,Helvetica,sans-serif;font-size:0.9rem;letter-spacing:0.3em;color:rgba(255,255,255,0.55);text-transform:uppercase;margin-bottom:1rem;">How I Got Here</h2>
+          <p style="font-family:Arial,Helvetica,sans-serif;font-size:1rem;line-height:1.8;color:rgba(255,255,255,0.85);margin-bottom:1.5rem;">
+            I discovered my calling accidentally. In 1998, I was fixing broken links during a website redesign at The Washington Post when I saw a video story a colleague had produced. Within seconds, I knew: this was what I wanted to do. Two years later I transitioned from web developer to video journalist — shooting, reporting, and editing solo. A decade of learning and storytelling followed.
+          </p>
+          <p style="font-family:Arial,Helvetica,sans-serif;font-size:1rem;line-height:1.8;color:rgba(255,255,255,0.85);">
+            In 2010, I left the Post and began working independently. In 2022, I joined NPR in Washington, D.C. — first as a video editor, then as visuals editor for the global health blog Goats and Soda, and finally as a producer on the hourly newscast. Along the way, I filmed a few Tiny Desk concerts.
+          </p>
+        </div>
+
+        <!-- Background -->
+        <div>
+          <h2 style="font-family:Arial,Helvetica,sans-serif;font-size:0.9rem;letter-spacing:0.3em;color:rgba(255,255,255,0.55);text-transform:uppercase;margin-bottom:1rem;">Background</h2>
+          <p style="font-family:Arial,Helvetica,sans-serif;font-size:1rem;line-height:1.8;color:rgba(255,255,255,0.85);">
+            I was born in Beirut, Lebanon and raised in Cherry Hill, New Jersey. I've since lived in Paris, Riyadh, Cairo, and Rome — Washington, D.C. is home now. I hold a bachelor's in International Relations from DePaul University in Chicago. I'm a native English speaker; my French and Italian are fluent, and my Arabic is functional in the field — enough to navigate, listen, and build trust.
+          </p>
+        </div>
+      </div>
+
+      <!-- Photo -->
+      <div>
+        <img
+          src="https://images.squarespace-cdn.com/content/v1/5e36b80361083b2de0d3ed2b/44157af4-1fb6-40c0-80a3-c865c367acda/PORTRAIT_1.jpg"
+          alt="Pierre Kattar"
+          style="width:100%;display:block;"
+        />
+        <p style="font-family:Arial,Helvetica,sans-serif;font-size:0.75rem;color:rgba(255,255,255,0.35);margin-top:0.5rem;">Photo by Isabelle Carbonell</p>
+      </div>
+
+    </div>
+
+  </main>
+  <Footer />
+</Layout>

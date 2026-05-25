@@ -1,0 +1,319 @@
+---
+import Layout from '../layouts/Layout.astro';
+import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
+import { films as allFilms } from '../lib/films';
+import { stills as allStills } from '../lib/stills';
+
+const filmItems = allFilms.map(film => {
+  let autoplayUrl = film.trailerUrl;
+  try {
+    const url = new URL(film.trailerUrl);
+    url.searchParams.set('autoplay', '1');
+    autoplayUrl = url.toString();
+  } catch(e) {}
+  return {
+    type: 'film',
+    category: film.category.toUpperCase(),
+    thumbnail: film.thumbnail,
+    title: film.title,
+    autoplayUrl,
+    role: film.role || '',
+    genre: film.genre || '',
+    client: film.client || '',
+    recognition: film.recognition || '',
+    notes: film.notes || '',
+  };
+});
+
+const stillItems = allStills.map(still => ({
+  type: 'still',
+  category: 'INTERVIEW STILLS',
+  thumbnail: still.thumbnail,
+  title: still.title,
+  autoplayUrl: '',
+  role: still.role || '',
+  genre: 'Interview Still',
+  client: still.client || '',
+  recognition: '',
+  notes: still.notes || '',
+}));
+
+const portfolioData = [...filmItems, ...stillItems];
+---
+
+<Layout>
+  <Header />
+  <main style="min-height:100vh;padding:9rem 2rem 3rem;">
+    <div style="max-width:1200px;margin:0 auto;">
+
+      <!-- Controls row -->
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:2.5rem;flex-wrap:wrap;gap:1.5rem;">
+
+        <!-- Category filters -->
+        <div style="display:flex;gap:2.5rem;">
+          {['JOURNALISM', 'DOCUMENTARY', 'FUN', 'INTERVIEW STILLS'].map((cat, i) => (
+            <button
+              class="filter-btn"
+              data-filter={cat}
+              style={`font-family:Arial,Helvetica,sans-serif;font-size:0.95rem;letter-spacing:0.25em;background:none;border:none;cursor:pointer;padding:0 0 4px 0;color:${i === 0 ? '#ffffff' : 'rgba(255,255,255,0.45)'};border-bottom:${i === 0 ? '1px solid #ffffff' : '1px solid transparent'};`}
+            >
+              {cat}
+            </button>
+          ))}
+        </div>
+
+        <!-- Sort controls -->
+        <div style="display:flex;align-items:center;gap:0.75rem;">
+          <span style="font-family:Arial,Helvetica,sans-serif;font-size:0.65rem;letter-spacing:0.25em;color:rgba(255,255,255,0.3);text-transform:uppercase;">Group by</span>
+          {['CLIENT', 'GENRE'].map(s => (
+            <button
+              class="sort-btn"
+              data-sort={s.toLowerCase()}
+              style="font-family:Arial,Helvetica,sans-serif;font-size:0.65rem;letter-spacing:0.2em;text-transform:uppercase;background:none;border:1px solid rgba(255,255,255,0.2);border-radius:2px;padding:3px 10px;cursor:pointer;color:rgba(255,255,255,0.4);transition:color 0.2s,border-color 0.2s;"
+            >
+              {s}
+            </button>
+          ))}
+        </div>
+
+      </div>
+
+      <!-- Grid (populated by JS) -->
+      <div id="film-grid"></div>
+
+    </div>
+  </main>
+  <Footer />
+</Layout>
+
+<!-- Modal -->
+<div id="film-modal" style="display:none;position:fixed;inset:0;z-index:50;align-items:center;justify-content:center;background:rgba(0,0,0,0.85);padding:1rem;">
+  <div style="position:relative;width:100%;max-width:56rem;background:#111;border-radius:2px;overflow:hidden;">
+    <button id="modal-close" style="position:absolute;right:1rem;top:1rem;z-index:10;background:none;border:none;cursor:pointer;color:rgba(255,255,255,0.6);">
+      <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <path d="M18 6 6 18"/><path d="m6 6 12 12"/>
+      </svg>
+    </button>
+    <div id="modal-player" style="aspect-ratio:16/9;background:#000;"></div>
+    <div id="modal-info" style="display:none;padding:1.5rem;"></div>
+  </div>
+</div>
+
+<script define:vars={{ portfolioData }}>
+  let activeFilter = new URLSearchParams(window.location.search).get('filter') || 'JOURNALISM';
+  let activeSort = '';
+
+  const filterBtns = document.querySelectorAll('.filter-btn');
+  const sortBtns = document.querySelectorAll('.sort-btn');
+  const grid = document.getElementById('film-grid');
+  const modal = document.getElementById('film-modal');
+  const modalPlayer = document.getElementById('modal-player');
+  const modalInfo = document.getElementById('modal-info');
+
+  // ── Filter buttons ──
+  filterBtns.forEach(btn => {
+    btn.addEventListener('click', () => {
+      activeFilter = btn.dataset.filter;
+      updateFilterStyles();
+      buildGrid();
+    });
+  });
+
+  // ── Sort buttons (toggle) ──
+  sortBtns.forEach(btn => {
+    btn.addEventListener('click', () => {
+      activeSort = activeSort === btn.dataset.sort ? '' : btn.dataset.sort;
+      updateSortStyles();
+      buildGrid();
+    });
+  });
+
+  function updateFilterStyles() {
+    filterBtns.forEach(b => {
+      const on = b.dataset.filter === activeFilter;
+      b.style.color = on ? '#fff' : 'rgba(255,255,255,0.45)';
+      b.style.borderBottom = on ? '1px solid #fff' : '1px solid transparent';
+    });
+  }
+
+  function updateSortStyles() {
+    sortBtns.forEach(b => {
+      const on = b.dataset.sort === activeSort;
+      b.style.color = on ? '#fff' : 'rgba(255,255,255,0.4)';
+      b.style.borderColor = on ? 'rgba(255,255,255,0.65)' : 'rgba(255,255,255,0.2)';
+    });
+  }
+
+  // ── Card factory ──
+  function createCard(item) {
+    const btn = document.createElement('button');
+    btn.style.cssText = 'background:none;border:none;cursor:pointer;text-align:left;padding:0;width:100%;min-width:0;';
+
+    const wrap = document.createElement('div');
+    wrap.style.cssText = 'position:relative;aspect-ratio:16/9;overflow:hidden;background:#1a1a1a;';
+
+    const img = document.createElement('img');
+    img.src = item.thumbnail;
+    img.alt = item.title;
+    img.loading = 'lazy';
+    img.style.cssText = 'position:absolute;inset:0;width:100%;height:100%;object-fit:cover;';
+    wrap.appendChild(img);
+
+    if (item.type === 'film') {
+      const ov = document.createElement('div');
+      ov.style.cssText = 'position:absolute;inset:0;display:flex;align-items:center;justify-content:center;opacity:0;transition:opacity 0.3s;';
+      ov.innerHTML = '<img src="https://assets.squarespace.com/universal/images-v6/damask/play-button@2x.png" alt="" width="48" height="48">';
+      wrap.appendChild(ov);
+      btn.addEventListener('mouseenter', () => ov.style.opacity = '1');
+      btn.addEventListener('mouseleave', () => ov.style.opacity = '0');
+    } else {
+      const ov = document.createElement('div');
+      ov.style.cssText = 'position:absolute;inset:0;background:rgba(0,0,0,0);transition:background 0.3s;';
+      wrap.appendChild(ov);
+      btn.addEventListener('mouseenter', () => ov.style.background = 'rgba(0,0,0,0.3)');
+      btn.addEventListener('mouseleave', () => ov.style.background = 'rgba(0,0,0,0)');
+    }
+
+    btn.appendChild(wrap);
+
+    const label = document.createElement('p');
+    label.textContent = item.title;
+    label.style.cssText = 'margin:6px 0 0;font-family:Arial,Helvetica,sans-serif;font-size:0.8rem;color:rgba(255,255,255,0.85);line-height:1.4;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;';
+    btn.appendChild(label);
+
+    btn.addEventListener('click', () => {
+      if (item.type === 'film' && item.autoplayUrl.includes('nytimes.com')) {
+        window.open(item.autoplayUrl, '_blank', 'noopener,noreferrer');
+      } else {
+        openModal(item);
+      }
+    });
+    return btn;
+  }
+
+  // ── Grid builder ──
+  function buildGrid() {
+    grid.innerHTML = '';
+
+    if (!activeSort) {
+      // Category filter mode
+      const items = portfolioData.filter(item => item.category === activeFilter);
+      const cols = activeFilter === 'INTERVIEW STILLS' ? 2 : 3;
+      grid.style.cssText = `display:grid;grid-template-columns:repeat(${cols},1fr);gap:12px;`;
+      items.forEach(item => grid.appendChild(createCard(item)));
+    } else {
+      // Group-by mode — all items, no category filter
+      grid.style.cssText = 'display:block;';
+      const groups = {};
+      for (const item of portfolioData) {
+        const key = item[activeSort] || '—';
+        if (!groups[key]) groups[key] = [];
+        groups[key].push(item);
+      }
+      const sortedKeys = Object.keys(groups).sort((a, b) => a.localeCompare(b));
+      for (const key of sortedKeys) {
+        const section = document.createElement('div');
+        section.style.cssText = 'margin-bottom:3.5rem;';
+
+        const heading = document.createElement('h3');
+        heading.textContent = key;
+        heading.style.cssText = 'font-family:Arial,Helvetica,sans-serif;font-size:1.1rem;letter-spacing:0.08em;color:rgba(255,255,255,0.9);margin-bottom:1.25rem;padding-bottom:0.75rem;border-bottom:1px solid rgba(255,255,255,0.15);';
+        section.appendChild(heading);
+
+        const subgrid = document.createElement('div');
+        subgrid.style.cssText = 'display:grid;grid-template-columns:repeat(3,1fr);gap:12px;';
+        groups[key].forEach(item => subgrid.appendChild(createCard(item)));
+        section.appendChild(subgrid);
+
+        grid.appendChild(section);
+      }
+    }
+
+    // Dim filter buttons when group-by is active
+    filterBtns.forEach(b => {
+      b.style.opacity = activeSort ? '0.3' : '1';
+      b.style.pointerEvents = activeSort ? 'none' : '';
+    });
+  }
+
+  // ── Modal ──
+  function openModal(item) {
+    if (item.type === 'still') {
+      const rows = [];
+      const lbl = t => `<span style="font-family:Arial,Helvetica,sans-serif;font-size:0.72rem;letter-spacing:0.2em;color:rgba(255,255,255,0.45);text-transform:uppercase;display:block;margin-bottom:0.25rem;">${t}</span>`;
+      const val = v => `<span style="font-family:Arial,Helvetica,sans-serif;font-size:0.9rem;color:#fff;">${v}</span>`;
+      if (item.role)   rows.push(`<div style="margin-bottom:0.75rem;">${lbl('Role')}${val(item.role)}</div>`);
+      if (item.client) rows.push(`<div style="margin-bottom:0.75rem;">${lbl('Client')}${val(item.client)}</div>`);
+      if (item.notes)  rows.push(`<div style="margin-bottom:0.75rem;">${lbl('Notes')}<span style="font-family:Arial,Helvetica,sans-serif;font-size:0.9rem;color:rgba(255,255,255,0.85);line-height:1.7;white-space:pre-line;display:block;">${item.notes}</span></div>`);
+      if (rows.length) { modalInfo.innerHTML = `<div style="padding:1.5rem;">${rows.join('')}</div>`; modalInfo.style.display = 'block'; }
+      else { modalInfo.style.display = 'none'; }
+    } else {
+      const fields = [
+        ['Role', item.role], ['Genre', item.genre],
+        ['Client', item.client], ['Recognition', item.recognition],
+      ];
+      const hasInfo = fields.some(([, v]) => v) || item.notes;
+      if (hasInfo) {
+        const rows = fields
+          .filter(([, v]) => v)
+          .map(([lbl, v]) => `<div style="display:flex;gap:0.75rem;font-size:0.875rem;"><span style="width:7rem;flex-shrink:0;color:rgba(255,255,255,0.5);">${lbl}</span><span style="color:#fff;">${v}</span></div>`);
+        if (item.notes) {
+          const nl = item.notes.indexOf('\n');
+          const noteLabel = nl > -1 ? item.notes.slice(0, nl) : item.notes;
+          const noteVal = nl > -1 ? item.notes.slice(nl + 1) : '';
+          rows.push(`<div style="display:flex;gap:0.75rem;font-size:0.875rem;"><span style="width:7rem;flex-shrink:0;color:rgba(255,255,255,0.5);">${noteLabel}</span><span style="color:#fff;white-space:pre-line;">${noteVal}</span></div>`);
+        }
+        modalInfo.innerHTML = `<div style="display:flex;flex-direction:column;gap:0.5rem;">${rows.join('')}</div>`;
+        modalInfo.style.cssText = 'display:block;padding:1.5rem;';
+      } else { modalInfo.style.display = 'none'; }
+    }
+
+    modalPlayer.innerHTML = '';
+    if (item.type === 'still') {
+      const img = document.createElement('img');
+      img.src = item.thumbnail;
+      img.style.cssText = 'width:100%;height:100%;object-fit:contain;display:block;';
+      modalPlayer.appendChild(img);
+    } else if (item.autoplayUrl.includes('nytimes.com')) {
+      const wrap = document.createElement('div');
+      wrap.style.cssText = 'position:relative;width:100%;height:100%;';
+      const img = document.createElement('img');
+      img.src = item.thumbnail;
+      img.style.cssText = 'width:100%;height:100%;object-fit:cover;display:block;';
+      const overlay = document.createElement('a');
+      overlay.href = item.autoplayUrl;
+      overlay.target = '_blank';
+      overlay.rel = 'noopener noreferrer';
+      overlay.style.cssText = 'position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;background:rgba(0,0,0,0.45);text-decoration:none;gap:1rem;';
+      overlay.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" width="56" height="56" viewBox="0 0 24 24" fill="rgba(255,255,255,0.9)"><path d="M8 5v14l11-7z"/></svg><span style="font-family:Arial,Helvetica,sans-serif;font-size:0.8rem;letter-spacing:0.15em;color:rgba(255,255,255,0.85);text-transform:uppercase;border-bottom:1px solid rgba(255,255,255,0.4);padding-bottom:2px;">Watch on The New York Times</span>';
+      wrap.appendChild(img);
+      wrap.appendChild(overlay);
+      modalPlayer.appendChild(wrap);
+    } else {
+      const iframe = document.createElement('iframe');
+      iframe.src = item.autoplayUrl;
+      iframe.setAttribute('allow', 'accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture');
+      iframe.setAttribute('allowfullscreen', '');
+      iframe.style.cssText = 'width:100%;height:100%;';
+      modalPlayer.appendChild(iframe);
+    }
+    modal.style.display = 'flex';
+    document.body.style.overflow = 'hidden';
+  }
+
+  function closeModal() {
+    modal.style.display = 'none';
+    modalPlayer.innerHTML = '';
+    document.body.style.overflow = '';
+  }
+
+  document.getElementById('modal-close').addEventListener('click', closeModal);
+  modal.addEventListener('click', e => { if (e.target === modal) closeModal(); });
+  document.addEventListener('keydown', e => { if (e.key === 'Escape') closeModal(); });
+
+  // ── Init ──
+  updateFilterStyles();
+  updateSortStyles();
+  buildGrid();
+</script>

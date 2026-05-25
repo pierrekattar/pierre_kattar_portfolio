@@ -1,0 +1,208 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import Header from '../../components/Header.astro';
+import Footer from '../../components/Footer.astro';
+import { films as allFilms } from '../../lib/films';
+import { stills as allStills } from '../../lib/stills';
+
+const CLIENT_PAGES = [
+  { slug: 'new-york-times',  clientName: 'The New York Times',   displayName: 'The New York Times'   },
+  { slug: 'world-bank',      clientName: 'The World Bank Group', displayName: 'The World Bank Group' },
+  { slug: 'self',            clientName: 'Self',                 displayName: 'Independent Work'     },
+];
+
+export function getStaticPaths() {
+  const CLIENT_PAGES = [
+    { slug: 'new-york-times',  clientName: 'The New York Times',   displayName: 'The New York Times',   description: '' },
+    { slug: 'world-bank',      clientName: 'The World Bank Group', displayName: 'The World Bank Group', description: 'As a producer, writer and director of photography, I work with World Bank staff to produce compelling visual stories on how development projects impact people\'s lives.' },
+    { slug: 'self',            clientName: 'Self',                 displayName: 'Independent Work',     description: '' },
+  ];
+
+  return CLIENT_PAGES.map(({ slug, clientName, displayName, description }) => {
+    const filmItems = allFilms
+      .filter(f => f.client === clientName)
+      .map(film => {
+        let autoplayUrl = film.trailerUrl;
+        try { const u = new URL(film.trailerUrl); u.searchParams.set('autoplay', '1'); autoplayUrl = u.toString(); } catch(e) {}
+        return { type: 'film', thumbnail: film.thumbnail, title: film.title, autoplayUrl, role: film.role || '', genre: film.genre || '', client: film.client || '', recognition: film.recognition || '', notes: film.notes || '' };
+      });
+
+    const stillItems = allStills
+      .filter(s => s.client === clientName)
+      .map(still => ({ type: 'still', thumbnail: still.thumbnail, title: still.title, autoplayUrl: '', role: still.role || '', genre: 'Interview Still', client: still.client || '', recognition: '', notes: still.notes || '' }));
+
+    return {
+      params: { slug },
+      props: { displayName, clientName, description, items: [...filmItems, ...stillItems] },
+    };
+  });
+}
+
+const { displayName, description, items } = Astro.props;
+const videoCount = items.filter(i => i.type === 'film').length;
+const stillCount = items.filter(i => i.type === 'still').length;
+const subtitle = [
+  videoCount ? `${videoCount} film${videoCount !== 1 ? 's' : ''}` : '',
+  stillCount ? `${stillCount} still${stillCount !== 1 ? 's' : ''}` : '',
+].filter(Boolean).join(' · ');
+---
+
+<Layout title={`${displayName} | Pierre Kattar`}>
+  <Header />
+  <main style="min-height:100vh;padding:9rem 2rem 5rem;">
+    <div style="max-width:1200px;margin:0 auto;">
+
+      <!-- Page header -->
+      <div style="margin-bottom:3.5rem;border-bottom:1px solid rgba(255,255,255,0.1);padding-bottom:2rem;text-align:center;">
+        <h1 style="font-family:Arial,Helvetica,sans-serif;font-size:2rem;font-weight:700;letter-spacing:0.08em;color:#fff;margin-bottom:0.5rem;text-transform:uppercase;">{displayName}</h1>
+        <p style="font-family:Arial,Helvetica,sans-serif;font-size:0.8rem;color:rgba(255,255,255,0.35);letter-spacing:0.1em;">{subtitle}</p>
+        {description && (
+          <p style="font-family:Arial,Helvetica,sans-serif;font-size:1.2rem;line-height:1.8;color:rgba(255,255,255,0.75);max-width:750px;margin:1.5rem auto 0;">{description}</p>
+        )}
+      </div>
+
+      <!-- Grid (populated by JS) -->
+      <div id="client-grid"></div>
+
+    </div>
+  </main>
+  <Footer />
+</Layout>
+
+<!-- Modal -->
+<div id="item-modal" style="display:none;position:fixed;inset:0;z-index:50;align-items:center;justify-content:center;background:rgba(0,0,0,0.85);padding:1rem;">
+  <div style="position:relative;width:100%;max-width:56rem;background:#111;border-radius:2px;overflow:hidden;">
+    <button id="modal-close" style="position:absolute;right:1rem;top:1rem;z-index:10;background:none;border:none;cursor:pointer;color:rgba(255,255,255,0.6);">
+      <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <path d="M18 6 6 18"/><path d="m6 6 12 12"/>
+      </svg>
+    </button>
+    <div id="modal-player" style="aspect-ratio:16/9;background:#000;"></div>
+    <div id="modal-info" style="display:none;padding:1.5rem;"></div>
+  </div>
+</div>
+
+<script define:vars={{ items }}>
+  const grid = document.getElementById('client-grid');
+  const modal = document.getElementById('item-modal');
+  const modalPlayer = document.getElementById('modal-player');
+  const modalInfo = document.getElementById('modal-info');
+
+  function createCard(item) {
+    const btn = document.createElement('button');
+    btn.style.cssText = 'background:none;border:none;cursor:pointer;text-align:left;padding:0;width:100%;min-width:0;';
+
+    const wrap = document.createElement('div');
+    wrap.style.cssText = 'position:relative;aspect-ratio:16/9;overflow:hidden;background:#1a1a1a;';
+
+    const img = document.createElement('img');
+    img.src = item.thumbnail;
+    img.alt = item.title;
+    img.loading = 'lazy';
+    img.style.cssText = 'position:absolute;inset:0;width:100%;height:100%;object-fit:cover;';
+    wrap.appendChild(img);
+
+    if (item.type === 'film') {
+      const ov = document.createElement('div');
+      ov.style.cssText = 'position:absolute;inset:0;display:flex;align-items:center;justify-content:center;opacity:0;transition:opacity 0.3s;';
+      ov.innerHTML = '<img src="https://assets.squarespace.com/universal/images-v6/damask/play-button@2x.png" alt="" width="48" height="48">';
+      wrap.appendChild(ov);
+      btn.addEventListener('mouseenter', () => ov.style.opacity = '1');
+      btn.addEventListener('mouseleave', () => ov.style.opacity = '0');
+    } else {
+      const ov = document.createElement('div');
+      ov.style.cssText = 'position:absolute;inset:0;background:rgba(0,0,0,0);transition:background 0.3s;';
+      wrap.appendChild(ov);
+      btn.addEventListener('mouseenter', () => ov.style.background = 'rgba(0,0,0,0.3)');
+      btn.addEventListener('mouseleave', () => ov.style.background = 'rgba(0,0,0,0)');
+    }
+
+    btn.appendChild(wrap);
+
+    const label = document.createElement('p');
+    label.textContent = item.title;
+    label.style.cssText = 'margin:6px 0 0;font-family:Arial,Helvetica,sans-serif;font-size:0.8rem;color:rgba(255,255,255,0.85);line-height:1.4;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;';
+    btn.appendChild(label);
+
+    btn.addEventListener('click', () => {
+      if (item.type === 'film' && item.autoplayUrl.includes('nytimes.com')) {
+        window.open(item.autoplayUrl, '_blank', 'noopener,noreferrer');
+      } else {
+        openModal(item);
+      }
+    });
+    return btn;
+  }
+
+  // Build grid
+  grid.style.cssText = 'display:grid;grid-template-columns:repeat(3,1fr);gap:12px;';
+  items.forEach(item => grid.appendChild(createCard(item)));
+
+  // Modal
+  function openModal(item) {
+    if (item.type === 'still') {
+      const rows = [];
+      const lbl = t => `<span style="font-family:Arial,Helvetica,sans-serif;font-size:0.72rem;letter-spacing:0.2em;color:rgba(255,255,255,0.45);text-transform:uppercase;display:block;margin-bottom:0.25rem;">${t}</span>`;
+      const val = v => `<span style="font-family:Arial,Helvetica,sans-serif;font-size:0.9rem;color:#fff;">${v}</span>`;
+      if (item.role)   rows.push(`<div style="margin-bottom:0.75rem;">${lbl('Role')}${val(item.role)}</div>`);
+      if (item.client) rows.push(`<div style="margin-bottom:0.75rem;">${lbl('Client')}${val(item.client)}</div>`);
+      if (item.notes)  rows.push(`<div style="margin-bottom:0.75rem;">${lbl('Notes')}<span style="font-family:Arial,Helvetica,sans-serif;font-size:0.9rem;color:rgba(255,255,255,0.85);line-height:1.7;white-space:pre-line;display:block;">${item.notes}</span></div>`);
+      if (rows.length) { modalInfo.innerHTML = `<div style="padding:1.5rem;">${rows.join('')}</div>`; modalInfo.style.display = 'block'; }
+      else { modalInfo.style.display = 'none'; }
+    } else {
+      const fields = [['Role', item.role], ['Genre', item.genre], ['Client', item.client], ['Recognition', item.recognition]];
+      const hasInfo = fields.some(([, v]) => v) || item.notes;
+      if (hasInfo) {
+        const rows = fields.filter(([, v]) => v).map(([l, v]) => `<div style="display:flex;gap:0.75rem;font-size:0.875rem;"><span style="width:7rem;flex-shrink:0;color:rgba(255,255,255,0.5);">${l}</span><span style="color:#fff;">${v}</span></div>`);
+        if (item.notes) {
+          const nl = item.notes.indexOf('\n');
+          rows.push(`<div style="display:flex;gap:0.75rem;font-size:0.875rem;"><span style="width:7rem;flex-shrink:0;color:rgba(255,255,255,0.5);">${nl > -1 ? item.notes.slice(0, nl) : item.notes}</span><span style="color:#fff;white-space:pre-line;">${nl > -1 ? item.notes.slice(nl + 1) : ''}</span></div>`);
+        }
+        modalInfo.innerHTML = `<div style="display:flex;flex-direction:column;gap:0.5rem;">${rows.join('')}</div>`;
+        modalInfo.style.cssText = 'display:block;padding:1.5rem;';
+      } else { modalInfo.style.display = 'none'; }
+    }
+
+    modalPlayer.innerHTML = '';
+    if (item.type === 'still') {
+      const img = document.createElement('img');
+      img.src = item.thumbnail;
+      img.style.cssText = 'width:100%;height:100%;object-fit:contain;display:block;';
+      modalPlayer.appendChild(img);
+    } else if (item.autoplayUrl.includes('nytimes.com')) {
+      const wrap = document.createElement('div');
+      wrap.style.cssText = 'position:relative;width:100%;height:100%;';
+      const img = document.createElement('img');
+      img.src = item.thumbnail;
+      img.style.cssText = 'width:100%;height:100%;object-fit:cover;display:block;';
+      const overlay = document.createElement('a');
+      overlay.href = item.autoplayUrl;
+      overlay.target = '_blank';
+      overlay.rel = 'noopener noreferrer';
+      overlay.style.cssText = 'position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;background:rgba(0,0,0,0.45);text-decoration:none;gap:1rem;';
+      overlay.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" width="56" height="56" viewBox="0 0 24 24" fill="rgba(255,255,255,0.9)"><path d="M8 5v14l11-7z"/></svg><span style="font-family:Arial,Helvetica,sans-serif;font-size:0.8rem;letter-spacing:0.15em;color:rgba(255,255,255,0.85);text-transform:uppercase;border-bottom:1px solid rgba(255,255,255,0.4);padding-bottom:2px;">Watch on The New York Times</span>';
+      wrap.appendChild(img);
+      wrap.appendChild(overlay);
+      modalPlayer.appendChild(wrap);
+    } else {
+      const iframe = document.createElement('iframe');
+      iframe.src = item.autoplayUrl;
+      iframe.setAttribute('allow', 'accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture');
+      iframe.setAttribute('allowfullscreen', '');
+      iframe.style.cssText = 'width:100%;height:100%;';
+      modalPlayer.appendChild(iframe);
+    }
+    modal.style.display = 'flex';
+    document.body.style.overflow = 'hidden';
+  }
+
+  function closeModal() {
+    modal.style.display = 'none';
+    modalPlayer.innerHTML = '';
+    document.body.style.overflow = '';
+  }
+
+  document.getElementById('modal-close').addEventListener('click', closeModal);
+  modal.addEventListener('click', e => { if (e.target === modal) closeModal(); });
+  document.addEventListener('keydown', e => { if (e.key === 'Escape') closeModal(); });
+</script>

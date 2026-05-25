@@ -1,0 +1,180 @@
+---
+import type { Film } from '../lib/films';
+
+interface Props {
+  films: Film[];
+  title: string;
+  id: string;
+}
+
+const { films, title, id } = Astro.props;
+---
+
+<section {id} class="py-16">
+  <div class="mx-auto max-w-7xl px-6 lg:px-8">
+    <h2 class="mb-12 text-center text-base font-medium tracking-[0.3em] text-foreground/80">
+      {title}
+    </h2>
+    <div class="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3">
+      {
+        films.map((film) => {
+          const autoplayUrl = (() => {
+            try {
+              const url = new URL(film.trailerUrl);
+              url.searchParams.set('autoplay', '1');
+              return url.toString();
+            } catch {
+              return film.trailerUrl;
+            }
+          })();
+          return (
+            <button
+              class="group block text-left"
+              data-film={JSON.stringify({ autoplayUrl, title: film.title, role: film.role, genre: film.genre, client: film.client, recognition: film.recognition, notes: film.notes })}
+            >
+              <div class="relative aspect-video overflow-hidden bg-card">
+                <img
+                  src={film.thumbnail}
+                  alt={film.title}
+                  class="absolute inset-0 h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
+                  loading="lazy"
+                />
+                <div class="absolute inset-0 bg-black/40 opacity-0 transition-opacity duration-300 group-hover:opacity-100" />
+                <div class="absolute inset-0 flex items-center justify-center opacity-0 transition-opacity duration-300 group-hover:opacity-100">
+                  <div class="flex h-16 w-16 items-center justify-center rounded-full bg-white/90">
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      width="24"
+                      height="24"
+                      viewBox="0 0 24 24"
+                      fill="black"
+                      stroke="black"
+                      stroke-width="2"
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      class="ml-1"
+                    >
+                      <polygon points="6 3 20 12 6 21 6 3" />
+                    </svg>
+                  </div>
+                </div>
+              </div>
+              <p class="mt-2 text-sm leading-relaxed text-foreground">{film.title}</p>
+            </button>
+          );
+        })
+      }
+    </div>
+  </div>
+</section>
+
+<!-- Modal -->
+<div id="film-modal" class="fixed inset-0 z-50 hidden items-center justify-center bg-black/80 p-4" role="dialog" aria-modal="true">
+  <div class="relative w-full max-w-4xl max-h-[90vh] overflow-y-auto bg-background rounded-sm">
+    <button id="modal-close" aria-label="Close" class="absolute right-4 top-4 z-10 text-foreground/60 hover:text-foreground">
+      <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M18 6 6 18"/><path d="m6 6 12 12"/>
+      </svg>
+    </button>
+    <div class="aspect-video w-full bg-black" id="modal-player"></div>
+    <div id="modal-info" class="hidden p-6">
+      <div class="flex flex-col gap-2">
+        <div id="modal-role" class="hidden flex gap-3 text-sm">
+          <span class="w-28 shrink-0 text-muted-foreground">Role</span>
+          <span id="modal-role-value" class="text-foreground"></span>
+        </div>
+        <div id="modal-genre" class="hidden flex gap-3 text-sm">
+          <span class="w-28 shrink-0 text-muted-foreground">Genre</span>
+          <span id="modal-genre-value" class="text-foreground"></span>
+        </div>
+        <div id="modal-client" class="hidden flex gap-3 text-sm">
+          <span class="w-28 shrink-0 text-muted-foreground">Client</span>
+          <span id="modal-client-value" class="text-foreground"></span>
+        </div>
+        <div id="modal-recognition" class="hidden flex gap-3 text-sm">
+          <span class="w-28 shrink-0 text-muted-foreground">Recognition</span>
+          <span id="modal-recognition-value" class="text-foreground"></span>
+        </div>
+        <div id="modal-notes" class="hidden flex gap-3 text-sm">
+          <span id="modal-notes-label" class="w-28 shrink-0 text-muted-foreground"></span>
+          <span id="modal-notes-value" class="text-foreground" style="white-space: pre-line"></span>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  const modal = document.getElementById('film-modal')!;
+  const modalPlayer = document.getElementById('modal-player')!;
+  const modalClose = document.getElementById('modal-close')!;
+  const modalInfo = document.getElementById('modal-info')!;
+  const modalRoleWrap = document.getElementById('modal-role')!;
+  const modalRoleValue = document.getElementById('modal-role-value')!;
+  const modalGenreWrap = document.getElementById('modal-genre')!;
+  const modalGenreValue = document.getElementById('modal-genre-value')!;
+  const modalClientWrap = document.getElementById('modal-client')!;
+  const modalClientValue = document.getElementById('modal-client-value')!;
+  const modalRecognitionWrap = document.getElementById('modal-recognition')!;
+  const modalRecognitionValue = document.getElementById('modal-recognition-value')!;
+  const modalNotes = document.getElementById('modal-notes')!;
+  const modalNotesLabel = document.getElementById('modal-notes-label')!;
+  const modalNotesValue = document.getElementById('modal-notes-value')!;
+
+  function openModal(film: { autoplayUrl: string; title: string; role?: string; genre?: string; client?: string; recognition?: string; notes?: string }) {
+    const hasInfo = film.role || film.genre || film.client || film.recognition || film.notes;
+    if (hasInfo) {
+      modalInfo.classList.remove('hidden');
+      if (film.role) { modalRoleValue.textContent = film.role; modalRoleWrap.classList.remove('hidden'); }
+      else { modalRoleWrap.classList.add('hidden'); }
+      if (film.genre) { modalGenreValue.textContent = film.genre; modalGenreWrap.classList.remove('hidden'); }
+      else { modalGenreWrap.classList.add('hidden'); }
+      if (film.client) { modalClientValue.textContent = film.client; modalClientWrap.classList.remove('hidden'); }
+      else { modalClientWrap.classList.add('hidden'); }
+      if (film.recognition) { modalRecognitionValue.textContent = film.recognition; modalRecognitionWrap.classList.remove('hidden'); }
+      else { modalRecognitionWrap.classList.add('hidden'); }
+      if (film.notes) {
+        const nlIdx = film.notes.indexOf('\n');
+        modalNotesLabel.textContent = nlIdx > -1 ? film.notes.slice(0, nlIdx) : film.notes;
+        modalNotesValue.textContent = nlIdx > -1 ? film.notes.slice(nlIdx + 1) : '';
+        modalNotes.classList.remove('hidden');
+      } else { modalNotes.classList.add('hidden'); }
+    } else {
+      modalInfo.classList.add('hidden');
+    }
+
+    const iframe = document.createElement('iframe');
+    iframe.src = film.autoplayUrl;
+    iframe.setAttribute('allow', 'accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture');
+    iframe.setAttribute('allowfullscreen', '');
+    iframe.className = 'h-full w-full';
+    modalPlayer.innerHTML = '';
+    modalPlayer.appendChild(iframe);
+
+    modal.classList.remove('hidden');
+    modal.classList.add('flex');
+    document.body.style.overflow = 'hidden';
+  }
+
+  function closeModal() {
+    modal.classList.add('hidden');
+    modal.classList.remove('flex');
+    modalPlayer.innerHTML = '';
+    document.body.style.overflow = '';
+  }
+
+  document.querySelectorAll<HTMLButtonElement>('[data-film]').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const film = JSON.parse(btn.dataset.film!);
+      openModal(film);
+    });
+  });
+
+  modalClose.addEventListener('click', closeModal);
+  modal.addEventListener('click', (e) => {
+    if (e.target === modal) closeModal();
+  });
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape') closeModal();
+  });
+</script>

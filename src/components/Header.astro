@@ -1,0 +1,142 @@
+---
+const pathname = Astro.url.pathname;
+
+const workLinks = [
+  { href: '/?filter=JOURNALISM', label: 'JOURNALISM' },
+  { href: '/?filter=DOCUMENTARY', label: 'DOCUMENTARY' },
+  { href: '/?filter=FUN', label: 'FUN' },
+  { href: '/?filter=INTERVIEW STILLS', label: 'INTERVIEW STILLS' },
+];
+---
+
+<header class="fixed top-0 left-0 right-0 z-50 bg-background/90 backdrop-blur-sm">
+  <nav class="mx-auto flex max-w-7xl items-center justify-between px-6 py-6 lg:px-8">
+    <a href="/" class="flex flex-col">
+      <span class="uppercase text-foreground" style="font-family:Arial,Helvetica,sans-serif;font-size:40px;font-weight:700;letter-spacing:.09em;line-height:1.4">PIERRE KATTAR</span>
+      <span class="text-base font-light tracking-wider text-foreground/80">Video Journalist and Filmmaker</span>
+    </a>
+
+    <!-- Desktop Navigation -->
+    <div class="hidden items-center gap-8 lg:flex">
+      <div class="relative" id="work-dropdown-container">
+        <a
+          href="/"
+          class={`text-sm font-medium tracking-widest transition-colors hover:text-foreground ${pathname === '/' ? 'text-foreground' : 'text-muted-foreground'}`}
+        >
+          WORK
+        </a>
+        <div id="work-dropdown" class="absolute left-0 top-full hidden pt-2">
+          <div class="flex flex-col gap-2 bg-card/95 p-4 backdrop-blur-sm min-w-[160px]">
+            {workLinks.map((link) => (
+              <a
+                href={link.href}
+                class="whitespace-nowrap text-sm font-medium tracking-widest text-muted-foreground transition-colors hover:text-foreground"
+              >
+                {link.label}
+              </a>
+            ))}
+          </div>
+        </div>
+      </div>
+      <a
+        href="/about"
+        class={`text-sm font-medium tracking-widest transition-colors hover:text-foreground ${pathname === '/about' ? 'text-foreground' : 'text-muted-foreground'}`}
+      >
+        ABOUT
+      </a>
+      <a
+        href="/gear"
+        class={`text-sm font-medium tracking-widest transition-colors hover:text-foreground ${pathname === '/gear' ? 'text-foreground' : 'text-muted-foreground'}`}
+      >
+        GEAR
+      </a>
+      <a
+        href="/contact"
+        class={`text-sm font-medium tracking-widest transition-colors hover:text-foreground ${pathname === '/contact' ? 'text-foreground' : 'text-muted-foreground'}`}
+      >
+        CONTACT
+      </a>
+    </div>
+
+    <!-- Mobile Menu Button -->
+    <button
+      type="button"
+      id="mobile-menu-btn"
+      class="lg:hidden text-foreground"
+      aria-label="Open menu"
+    >
+      <svg
+        id="icon-menu"
+        xmlns="http://www.w3.org/2000/svg"
+        width="24"
+        height="24"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="2"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+      >
+        <line x1="4" x2="20" y1="12" y2="12" />
+        <line x1="4" x2="20" y1="6" y2="6" />
+        <line x1="4" x2="20" y1="18" y2="18" />
+      </svg>
+      <svg
+        id="icon-close"
+        class="hidden"
+        xmlns="http://www.w3.org/2000/svg"
+        width="24"
+        height="24"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="2"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+      >
+        <path d="M18 6 6 18" />
+        <path d="m6 6 12 12" />
+      </svg>
+    </button>
+  </nav>
+
+  <!-- Mobile Menu -->
+  <div id="mobile-menu" class="hidden border-t border-border bg-background lg:hidden">
+    <div class="space-y-4 px-6 py-4">
+      <a href="/" class="block text-sm font-medium tracking-widest text-foreground">WORK</a>
+      <div class="space-y-3 pl-4">
+        {workLinks.map((link) => (
+          <a href={link.href} class="block text-sm font-medium tracking-widest text-muted-foreground">{link.label}</a>
+        ))}
+      </div>
+      <a href="/about" class="block text-sm font-medium tracking-widest text-foreground">ABOUT</a>
+      <a href="/gear" class="block text-sm font-medium tracking-widest text-foreground">GEAR</a>
+      <a href="/contact" class="block text-sm font-medium tracking-widest text-foreground"
+        >CONTACT</a
+      >
+    </div>
+  </div>
+</header>
+
+<script>
+  // Mobile menu toggle
+  const btn = document.getElementById('mobile-menu-btn')!;
+  const menu = document.getElementById('mobile-menu')!;
+  const iconMenu = document.getElementById('icon-menu')!;
+  const iconClose = document.getElementById('icon-close')!;
+
+  btn.addEventListener('click', () => {
+    const isNowOpen = menu.classList.toggle('hidden') === false;
+    iconMenu.classList.toggle('hidden', isNowOpen);
+    iconClose.classList.toggle('hidden', !isNowOpen);
+    btn.setAttribute('aria-label', isNowOpen ? 'Close menu' : 'Open menu');
+  });
+
+  // Work dropdown on hover
+  const container = document.getElementById('work-dropdown-container');
+  const dropdown = document.getElementById('work-dropdown');
+  if (container && dropdown) {
+    container.addEventListener('mouseenter', () => dropdown.classList.remove('hidden'));
+    container.addEventListener('mouseleave', () => dropdown.classList.add('hidden'));
+  }
+</script>

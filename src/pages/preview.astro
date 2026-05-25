@@ -1,0 +1,187 @@
+---
+import Layout from '../layouts/Layout.astro';
+import Header from '../components/Header.astro';
+import { films as allFilms } from '../lib/films';
+import type { Film } from '../lib/films';
+---
+
+<Layout>
+  <Header />
+  <main style="min-height:100vh;padding:9rem 2rem 3rem;">
+    <div style="max-width:1200px;margin:0 auto;">
+
+      <!-- Filters -->
+      <div style="display:flex;gap:2.5rem;margin-bottom:2.5rem;">
+        {['JOURNALISM', 'DOCUMENTARY', 'FUN'].map((cat, i) => (
+          <button
+            class="filter-btn"
+            data-filter={cat}
+            style={`font-family:Arial,Helvetica,sans-serif;font-size:0.95rem;letter-spacing:0.25em;background:none;border:none;cursor:pointer;padding:0 0 4px 0;color:${i === 0 ? '#ffffff' : 'rgba(255,255,255,0.45)'};border-bottom:${i === 0 ? '1px solid #ffffff' : '1px solid transparent'};`}
+          >
+            {cat}
+          </button>
+        ))}
+      </div>
+
+      <!-- Grid -->
+      <div id="film-grid" style="display:grid;grid-template-columns:repeat(3,1fr);gap:12px;">
+        {allFilms.map((film: Film) => {
+          const autoplayUrl = (() => {
+            try {
+              const url = new URL(film.trailerUrl);
+              url.searchParams.set('autoplay', '1');
+              return url.toString();
+            } catch(e) {
+              return film.trailerUrl;
+            }
+          })();
+          return (
+            <button
+              class="film-card"
+              data-category={film.category.toUpperCase()}
+              data-film={JSON.stringify({ autoplayUrl, title: film.title, role: film.role, genre: film.genre, client: film.client, recognition: film.recognition, notes: film.notes })}
+              style="background:none;border:none;cursor:pointer;text-align:left;padding:0;width:100%;min-width:0;"
+            >
+              <div style="position:relative;aspect-ratio:16/9;overflow:hidden;background:#1a1a1a;">
+                <img
+                  src={film.thumbnail}
+                  alt={film.title}
+                  style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;"
+                  loading="lazy"
+                />
+                <div class="play-overlay" style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;opacity:0;transition:opacity 0.3s;">
+                  <img src="https://assets.squarespace.com/universal/images-v6/damask/play-button@2x.png" alt="" width="48" height="48" />
+                </div>
+              </div>
+              <p style="margin:6px 0 0;font-family:Arial,Helvetica,sans-serif;font-size:0.8rem;color:rgba(255,255,255,0.85);line-height:1.4;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">{film.title}</p>
+            </button>
+          );
+        })}
+      </div>
+
+    </div>
+  </main>
+</Layout>
+
+<!-- Modal -->
+<div id="film-modal" style="display:none;position:fixed;inset:0;z-index:50;align-items:center;justify-content:center;background:rgba(0,0,0,0.85);padding:1rem;">
+  <div style="position:relative;width:100%;max-width:56rem;background:#111;border-radius:2px;overflow:hidden;">
+    <button id="modal-close" style="position:absolute;right:1rem;top:1rem;z-index:10;background:none;border:none;cursor:pointer;color:rgba(255,255,255,0.6);">
+      <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <path d="M18 6 6 18"/><path d="m6 6 12 12"/>
+      </svg>
+    </button>
+    <div id="modal-player" style="aspect-ratio:16/9;background:#000;"></div>
+    <div id="modal-info" style="display:none;padding:1.5rem;">
+      <div style="display:flex;flex-direction:column;gap:0.5rem;">
+        <div id="modal-role" style="display:none;gap:0.75rem;font-size:0.875rem;">
+          <span style="width:7rem;flex-shrink:0;color:rgba(255,255,255,0.5);">Role</span>
+          <span id="modal-role-value" style="color:#fff;"></span>
+        </div>
+        <div id="modal-genre" style="display:none;gap:0.75rem;font-size:0.875rem;">
+          <span style="width:7rem;flex-shrink:0;color:rgba(255,255,255,0.5);">Genre</span>
+          <span id="modal-genre-value" style="color:#fff;"></span>
+        </div>
+        <div id="modal-client" style="display:none;gap:0.75rem;font-size:0.875rem;">
+          <span style="width:7rem;flex-shrink:0;color:rgba(255,255,255,0.5);">Client</span>
+          <span id="modal-client-value" style="color:#fff;"></span>
+        </div>
+        <div id="modal-recognition" style="display:none;gap:0.75rem;font-size:0.875rem;">
+          <span style="width:7rem;flex-shrink:0;color:rgba(255,255,255,0.5);">Recognition</span>
+          <span id="modal-recognition-value" style="color:#fff;"></span>
+        </div>
+        <div id="modal-notes" style="display:none;gap:0.75rem;font-size:0.875rem;">
+          <span id="modal-notes-label" style="width:7rem;flex-shrink:0;color:rgba(255,255,255,0.5);"></span>
+          <span id="modal-notes-value" style="color:#fff;white-space:pre-line;"></span>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  // Hover on thumbnails
+  document.querySelectorAll<HTMLElement>('.film-card').forEach(card => {
+    const overlay = card.querySelector<HTMLElement>('.play-overlay')!;
+    card.addEventListener('mouseenter', () => overlay.style.opacity = '1');
+    card.addEventListener('mouseleave', () => overlay.style.opacity = '0');
+  });
+
+  // Filters
+  const filterBtns = document.querySelectorAll<HTMLButtonElement>('.filter-btn');
+  const filmCards = document.querySelectorAll<HTMLElement>('.film-card');
+
+  // Default: show only JOURNALISM on load
+  filmCards.forEach(card => {
+    card.style.display = card.dataset.category === 'JOURNALISM' ? '' : 'none';
+  });
+
+  filterBtns.forEach(btn => {
+    btn.addEventListener('click', () => {
+      const filter = btn.dataset.filter!;
+      filterBtns.forEach(b => {
+        b.style.color = 'rgba(255,255,255,0.45)';
+        b.style.borderBottom = '1px solid transparent';
+      });
+      btn.style.color = '#ffffff';
+      btn.style.borderBottom = '1px solid #ffffff';
+      filmCards.forEach(card => {
+        card.style.display = card.dataset.category === filter ? '' : 'none';
+      });
+    });
+  });
+
+  // Modal
+  const modal = document.getElementById('film-modal')!;
+  const modalPlayer = document.getElementById('modal-player')!;
+
+  function show(el: HTMLElement, flex = false) { el.style.display = flex ? 'flex' : 'block'; }
+  function hide(el: HTMLElement) { el.style.display = 'none'; }
+
+  function openModal(film: any) {
+    const modalInfo = document.getElementById('modal-info')!;
+    const fields: [string, string][] = [
+      ['modal-role', film.role], ['modal-genre', film.genre],
+      ['modal-client', film.client], ['modal-recognition', film.recognition],
+    ];
+    const hasInfo = fields.some(([, v]) => v) || film.notes;
+    if (hasInfo) {
+      show(modalInfo);
+      fields.forEach(([id, val]) => {
+        const wrap = document.getElementById(id)!;
+        const value = document.getElementById(id + '-value')!;
+        if (val) { value.textContent = val; show(wrap, true); } else { hide(wrap); }
+      });
+      const notesWrap = document.getElementById('modal-notes')!;
+      if (film.notes) {
+        const nl = film.notes.indexOf('\n');
+        document.getElementById('modal-notes-label')!.textContent = nl > -1 ? film.notes.slice(0, nl) : film.notes;
+        document.getElementById('modal-notes-value')!.textContent = nl > -1 ? film.notes.slice(nl + 1) : '';
+        show(notesWrap, true);
+      } else { hide(notesWrap); }
+    } else { hide(modalInfo); }
+
+    const iframe = document.createElement('iframe');
+    iframe.src = film.autoplayUrl;
+    iframe.setAttribute('allow', 'accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture');
+    iframe.setAttribute('allowfullscreen', '');
+    iframe.style.cssText = 'width:100%;height:100%;';
+    modalPlayer.innerHTML = '';
+    modalPlayer.appendChild(iframe);
+    modal.style.display = 'flex';
+    document.body.style.overflow = 'hidden';
+  }
+
+  function closeModal() {
+    modal.style.display = 'none';
+    modalPlayer.innerHTML = '';
+    document.body.style.overflow = '';
+  }
+
+  document.querySelectorAll<HTMLButtonElement>('.film-card').forEach(btn => {
+    btn.addEventListener('click', () => openModal(JSON.parse(btn.dataset.film!)));
+  });
+  document.getElementById('modal-close')!.addEventListener('click', closeModal);
+  modal.addEventListener('click', e => { if (e.target === modal) closeModal(); });
+  document.addEventListener('keydown', e => { if (e.key === 'Escape') closeModal(); });
+</script>

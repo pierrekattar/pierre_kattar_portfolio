@@ -1,0 +1,112 @@
+---
+import Layout from '../layouts/Layout.astro';
+import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
+---
+
+<Layout title="Contact | Pierre Kattar">
+  <Header />
+  <main style="min-height:100vh;padding:9rem 2rem 5rem;">
+    <div style="max-width:660px;margin:0 auto;">
+
+      <h1 style="font-family:Arial,Helvetica,sans-serif;font-size:1rem;letter-spacing:0.3em;color:rgba(255,255,255,0.65);text-transform:uppercase;margin-bottom:2.5rem;">Contact</h1>
+
+      <form
+        id="contact-form"
+        action="https://formspree.io/f/mdajweyk"
+        method="POST"
+        style="display:flex;flex-direction:column;gap:2rem;"
+      >
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:2rem;">
+          <div>
+            <label style="display:block;font-family:Arial,Helvetica,sans-serif;font-size:0.72rem;letter-spacing:0.2em;color:rgba(255,255,255,0.9);text-transform:uppercase;margin-bottom:0.6rem;">Name</label>
+            <input
+              type="text"
+              name="name"
+              required
+              style="width:100%;background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.15);border-radius:2px;padding:0.75rem 1rem;font-family:Arial,Helvetica,sans-serif;font-size:1rem;color:#fff;outline:none;box-sizing:border-box;"
+            />
+          </div>
+          <div>
+            <label style="display:block;font-family:Arial,Helvetica,sans-serif;font-size:0.72rem;letter-spacing:0.2em;color:rgba(255,255,255,0.9);text-transform:uppercase;margin-bottom:0.6rem;">Email</label>
+            <input
+              type="email"
+              name="email"
+              required
+              style="width:100%;background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.15);border-radius:2px;padding:0.75rem 1rem;font-family:Arial,Helvetica,sans-serif;font-size:1rem;color:#fff;outline:none;box-sizing:border-box;"
+            />
+          </div>
+        </div>
+
+        <div>
+          <label style="display:block;font-family:Arial,Helvetica,sans-serif;font-size:0.72rem;letter-spacing:0.2em;color:rgba(255,255,255,0.9);text-transform:uppercase;margin-bottom:0.6rem;">Subject</label>
+          <input
+            type="text"
+            name="subject"
+            required
+            style="width:100%;background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.15);border-radius:2px;padding:0.75rem 1rem;font-family:Arial,Helvetica,sans-serif;font-size:1rem;color:#fff;outline:none;box-sizing:border-box;"
+          />
+        </div>
+
+        <div>
+          <label style="display:block;font-family:Arial,Helvetica,sans-serif;font-size:0.72rem;letter-spacing:0.2em;color:rgba(255,255,255,0.9);text-transform:uppercase;margin-bottom:0.6rem;">Message</label>
+          <textarea
+            name="message"
+            required
+            rows="7"
+            style="width:100%;background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.15);border-radius:2px;padding:0.75rem 1rem;font-family:Arial,Helvetica,sans-serif;font-size:1rem;color:#fff;outline:none;resize:vertical;box-sizing:border-box;line-height:1.6;"
+          ></textarea>
+        </div>
+
+        <div>
+          <button
+            type="submit"
+            style="font-family:Arial,Helvetica,sans-serif;font-size:0.8rem;letter-spacing:0.25em;text-transform:uppercase;background:none;border:1px solid rgba(255,255,255,0.4);color:#fff;padding:0.85rem 2.5rem;cursor:pointer;transition:border-color 0.2s;"
+            onmouseover="this.style.borderColor='#fff'"
+            onmouseout="this.style.borderColor='rgba(255,255,255,0.4)'"
+          >
+            Send
+          </button>
+        </div>
+
+      </form>
+
+      <div id="form-status" style="display:none;margin-top:2rem;">
+        <p id="form-status-msg" style="font-family:Arial,Helvetica,sans-serif;font-size:0.9rem;color:rgba(255,255,255,0.65);margin-bottom:1.25rem;"></p>
+        <a id="form-home-link" href="/" style="display:none;font-family:Arial,Helvetica,sans-serif;font-size:0.8rem;letter-spacing:0.25em;text-transform:uppercase;color:#fff;border-bottom:1px solid rgba(255,255,255,0.4);padding-bottom:2px;text-decoration:none;">Back to Home</a>
+      </div>
+
+    </div>
+  </main>
+  <Footer />
+</Layout>
+
+<style>
+  input::placeholder, textarea::placeholder { color: rgba(255,255,255,0.25); }
+  input:focus, textarea:focus { border-color: rgba(255,255,255,0.4) !important; }
+</style>
+
+<script>
+  const form = document.getElementById('contact-form') as HTMLFormElement;
+  const statusWrap = document.getElementById('form-status')!;
+  const statusMsg = document.getElementById('form-status-msg')!;
+  const homeLink = document.getElementById('form-home-link')!;
+
+  form.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const data = new FormData(form);
+    const res = await fetch(form.action, {
+      method: 'POST',
+      body: data,
+      headers: { Accept: 'application/json' },
+    });
+    statusWrap.style.display = 'block';
+    if (res.ok) {
+      form.style.display = 'none';
+      statusMsg.textContent = "Message sent. I'll be in touch soon.";
+      homeLink.style.display = 'inline';
+    } else {
+      statusMsg.textContent = 'Something went wrong. Please try again or email directly.';
+    }
+  });
+</script>

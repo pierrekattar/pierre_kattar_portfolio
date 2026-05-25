@@ -1,0 +1,60 @@
+---
+import Layout from '../layouts/Layout.astro';
+import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
+
+const gear = [
+  {
+    category: 'Cameras',
+    items: [
+      'Sony FX6',
+      'Sony FS7',
+      'DJI Air 2S (drone)',
+      'Ricoh GR II (stills)',
+    ],
+  },
+  {
+    category: 'Lenses',
+    items: [
+      'Sony 24-105mm f/4',
+      'Canon 70-200mm f/2.8',
+      'Canon FD 50mm f/1.4',
+      'Canon FD 28mm f/2.8',
+    ],
+  },
+  {
+    category: 'Audio',
+    items: [
+      'Sony URX-P03D wireless receiver',
+      'Sony UTX-B03HR/K21 transmitters (×2)',
+      'DEITY S-Mic 2S (shotgun)',
+      'Sennheiser ME-66 (shotgun)',
+    ],
+  },
+];
+---
+
+<Layout title="Gear | Pierre Kattar">
+  <Header />
+  <main style="min-height:100vh;padding:9rem 2rem 5rem;">
+    <div style="max-width:620px;margin:0 auto;">
+
+      <h1 style="font-family:Arial,Helvetica,sans-serif;font-size:1.5rem;letter-spacing:0.2em;color:rgba(255,255,255,0.85);text-transform:uppercase;margin-bottom:3rem;">Gear</h1>
+
+      <div style="display:flex;flex-direction:column;gap:3rem;">
+        {gear.map(section => (
+          <div>
+            <h2 style="font-family:Arial,Helvetica,sans-serif;font-size:0.9rem;letter-spacing:0.3em;color:rgba(255,255,255,0.55);text-transform:uppercase;margin-bottom:1.25rem;">{section.category}</h2>
+            <ul style="list-style:none;padding:0;margin:0;display:flex;flex-direction:column;gap:0.6rem;">
+              {section.items.map(item => (
+                <li style="font-family:Arial,Helvetica,sans-serif;font-size:1rem;color:rgba(255,255,255,0.85);line-height:1.6;">{item}</li>
+              ))}
+            </ul>
+          </div>
+        ))}
+      </div>
+
+    </div>
+  </main>
+  <Footer />
+</Layout>

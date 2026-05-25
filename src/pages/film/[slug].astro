@@ -1,0 +1,184 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import Header from '../../components/Header.astro';
+import Footer from '../../components/Footer.astro';
+import { films, getFilmBySlug } from '../../lib/films';
+
+export function getStaticPaths() {
+  return films.map((film) => ({ params: { slug: film.slug } }));
+}
+
+const { slug } = Astro.params;
+const film = getFilmBySlug(slug)!;
+
+function capitalize(s: string) {
+  return s.charAt(0).toUpperCase() + s.slice(1);
+}
+
+const autoplayUrl = (() => {
+  try {
+    const url = new URL(film.trailerUrl);
+    url.searchParams.set('autoplay', '1');
+    return url.toString();
+  } catch {
+    return film.trailerUrl;
+  }
+})();
+---
+
+<Layout title={`${film.title} | Pierre Kattar`} description={film.logline}>
+  <Header />
+  <main class="min-h-screen pt-24">
+
+    <!-- Video Player -->
+    <section class="w-full bg-black">
+      <div class="relative aspect-video w-full" id="player-wrap" data-src={autoplayUrl}>
+        <img
+          src={film.thumbnail}
+          alt={film.title}
+          class="absolute inset-0 h-full w-full object-cover"
+        />
+        <button
+          id="play-btn"
+          aria-label="Play video"
+          class="absolute inset-0 flex h-full w-full items-center justify-center bg-black/30 transition-colors hover:bg-black/40"
+        >
+          <div class="flex h-20 w-20 items-center justify-center rounded-full bg-white/90">
+            <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="black" class="ml-1">
+              <polygon points="6 3 20 12 6 21 6 3" />
+            </svg>
+          </div>
+        </button>
+      </div>
+    </section>
+
+    <script>
+      const wrap = document.getElementById('player-wrap') as HTMLElement;
+      const btn = document.getElementById('play-btn') as HTMLElement;
+      btn.addEventListener('click', () => {
+        const iframe = document.createElement('iframe');
+        iframe.src = wrap.dataset.src!;
+        iframe.title = wrap.querySelector('img')!.alt;
+        iframe.setAttribute('allow', 'accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture');
+        iframe.setAttribute('allowfullscreen', '');
+        iframe.className = 'absolute inset-0 h-full w-full';
+        wrap.innerHTML = '';
+        wrap.appendChild(iframe);
+      });
+    </script>
+
+
+    <!-- Film Info -->
+    <section class="mt-12">
+      <div class="mx-auto max-w-4xl px-6 lg:px-8">
+        <!-- Back Link -->
+        <a
+          href={`/#${film.category}`}
+          class="mb-8 inline-flex items-center gap-2 text-sm text-muted-foreground transition-colors hover:text-foreground"
+        >
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            width="16"
+            height="16"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+          >
+            <path d="m12 19-7-7 7-7" />
+            <path d="M19 12H5" />
+          </svg>
+          Back to {capitalize(film.category)}
+        </a>
+
+        <!-- Title & Logline -->
+        <h1 class="text-4xl font-bold text-foreground sm:text-5xl">{film.title}</h1>
+        <p class="mt-4 text-xl italic text-muted-foreground">{film.logline}</p>
+        <p class="mt-2 text-sm text-muted-foreground">
+          {film.year} • {capitalize(film.category)}
+        </p>
+
+        <!-- Metadata -->
+        {(film.role || film.genre || film.client || film.recognition || film.notes) && (
+          <div class="mt-6 flex flex-col gap-2">
+            {film.role && (
+              <div class="flex gap-3 text-sm">
+                <span class="w-28 shrink-0 text-muted-foreground">Role</span>
+                <span class="text-foreground">{film.role}</span>
+              </div>
+            )}
+            {film.genre && (
+              <div class="flex gap-3 text-sm">
+                <span class="w-28 shrink-0 text-muted-foreground">Genre</span>
+                <span class="text-foreground">{film.genre}</span>
+              </div>
+            )}
+            {film.client && (
+              <div class="flex gap-3 text-sm">
+                <span class="w-28 shrink-0 text-muted-foreground">Client</span>
+                <span class="text-foreground">{film.client}</span>
+              </div>
+            )}
+            {film.recognition && (
+              <div class="flex gap-3 text-sm">
+                <span class="w-28 shrink-0 text-muted-foreground">Recognition</span>
+                <span class="text-foreground">{film.recognition}</span>
+              </div>
+            )}
+            {film.notes && (
+              <div class="flex gap-3 text-sm">
+                <span class="w-28 shrink-0 text-muted-foreground">{film.notes.split('\n')[0]}</span>
+                <span class="text-foreground" style="white-space: pre-line">{film.notes.split('\n').slice(1).join('\n')}</span>
+              </div>
+            )}
+          </div>
+        )}
+
+        <!-- Synopsis -->
+        {film.synopsis && (
+          <div class="mt-12">
+            <h2 class="mb-4 text-sm font-medium tracking-[0.3em] text-muted-foreground">SYNOPSIS</h2>
+            <p class="leading-relaxed text-foreground">{film.synopsis}</p>
+          </div>
+        )}
+
+        <!-- Gallery -->
+        <div class="mt-16">
+          <h2 class="mb-6 text-sm font-medium tracking-[0.3em] text-muted-foreground">GALLERY</h2>
+          <div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
+            {
+              film.gallery.map((image, index) => (
+                <div class="relative aspect-video overflow-hidden bg-card">
+                  <img
+                    src={image}
+                    alt={`${film.title} still ${index + 1}`}
+                    class="absolute inset-0 h-full w-full object-cover transition-transform duration-500 hover:scale-105"
+                    loading="lazy"
+                  />
+                </div>
+              ))
+            }
+          </div>
+        </div>
+
+        <!-- Credits -->
+        <div class="mt-16 pb-20">
+          <h2 class="mb-6 text-sm font-medium tracking-[0.3em] text-muted-foreground">CREDITS</h2>
+          <div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
+            {
+              film.credits.map((credit) => (
+                <div class="flex justify-between border-b border-border py-3">
+                  <span class="text-muted-foreground">{credit.role}</span>
+                  <span class="text-foreground">{credit.name}</span>
+                </div>
+              ))
+            }
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+  <Footer />
+</Layout>
