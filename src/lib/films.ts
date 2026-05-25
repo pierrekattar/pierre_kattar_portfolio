@@ -1241,7 +1241,7 @@ export const films: Film[] = [
     gallery: [],
     role: "Director of Photography",
     client: "Headcount",
-    genre: "Branded Documentary Short",
+    genre: "Corporate Documentary Short",
     credits: [{ role: "Director of Photography", name: "Pierre Kattar" }],
   },
   {
@@ -1257,7 +1257,7 @@ export const films: Film[] = [
     gallery: [],
     role: "Director, Cinematographer, Editor, Writer, Narrator",
     client: "CollaborateUp!",
-    genre: "Branded Documentary Short",
+    genre: "Corporate Documentary Short",
     credits: [{ role: "Director of Photography", name: "Pierre Kattar" }],
   },
   {
@@ -1306,6 +1306,7 @@ export const films: Film[] = [
     gallery: [],
     role: "Editor, Producer",
     client: "Abcam",
+    genre: "Branded Documentary Short",
     credits: [{ role: "Director of Photography", name: "Pierre Kattar" }],
   },
   {

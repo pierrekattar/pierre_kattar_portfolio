@@ -24,7 +24,7 @@ function requireAuth(req, res) {
 
 const ROLES       = ['Director', 'Director of Photography', 'Cinematographer', 'Editor', 'Producer', 'Writer', 'Narrator', 'Reporter', 'Video Journalist'];
 const CLIENTS     = ['The New York Times', 'The Washington Post', 'The World Bank Group', 'National Public Radio', 'PBS', 'Newsweek', 'The Three Strikes Project', 'Culinary Backstreets', 'Orb Media', 'CollaborateUp!', 'I Am a Voter', 'Headcount', 'Center for American Progress', 'VJ Movement', 'Francesco Conte', 'Imitating Life Film', 'Her Aim is True Film', 'Abcam', 'Abdorrahman Boroumand Center for Human Rights in Iran', 'Roma Balkan Lab Orchestra', 'Red Orange Morning', 'Michael G. Smith', 'Seth Goldstein', 'Jill Drew', 'Whitman, Alabama', 'Self'];
-const GENRES      = ['Documentary Short', 'Independent Documentary Short', 'Corporate Documentary Short', 'Documentary', 'Music Video', 'Narrative Short', 'Breaking News', 'News'];
+const GENRES      = ['Documentary Short', 'Independent Documentary Short', 'Corporate Documentary Short', 'Branded Documentary Short', 'Documentary', 'Music Video', 'Narrative Short', 'Breaking News', 'News'];
 const RECOGNITION = ['Emmy (local)', 'Emmy Nominated (national)'];
 
 // ─── Parse films.ts ───────────────────────────────────────────────────────────
