@@ -11,6 +11,17 @@ const FILMS_PATH  = path.resolve(__dirname, '../src/lib/films.ts');
 const STILLS_PATH = path.resolve(__dirname, '../src/lib/stills.ts');
 const PORT = 3001;
 
+const AUTH_USER = 'pierrekattar';
+const AUTH_PASS = 'pkiS0kAdmin!';
+const AUTH_TOKEN = 'Basic ' + Buffer.from(`${AUTH_USER}:${AUTH_PASS}`).toString('base64');
+
+function requireAuth(req, res) {
+  if (req.headers['authorization'] === AUTH_TOKEN) return true;
+  res.writeHead(401, { 'WWW-Authenticate': 'Basic realm="Admin"', 'Content-Type': 'text/plain' });
+  res.end('Unauthorized');
+  return false;
+}
+
 const ROLES       = ['Director', 'Director of Photography', 'Cinematographer', 'Editor', 'Producer', 'Writer', 'Narrator', 'Reporter', 'Video Journalist'];
 const CLIENTS     = ['The New York Times', 'The Washington Post', 'The World Bank Group', 'National Public Radio', 'PBS', 'Newsweek', 'The Three Strikes Project', 'Culinary Backstreets', 'Orb Media', 'CollaborateUp!', 'I Am a Voter', 'Headcount', 'Center for American Progress', 'VJ Movement', 'Francesco Conte', 'Imitating Life Film', 'Her Aim is True Film', 'Abcam', 'Abdorrahman Boroumand Center for Human Rights in Iran', 'Roma Balkan Lab Orchestra', 'Red Orange Morning', 'Michael G. Smith', 'Seth Goldstein', 'Jill Drew', 'Whitman, Alabama', 'Self'];
 const GENRES      = ['Documentary Short', 'Independent Documentary Short', 'Corporate Documentary Short', 'Documentary', 'Music Video', 'Narrative Short'];
@@ -704,6 +715,8 @@ function renderPage() {
 // ─── HTTP server ──────────────────────────────────────────────────────────────
 
 http.createServer((req, res) => {
+  if (!requireAuth(req, res)) return;
+
   if (req.method === 'GET' && req.url === '/') {
     res.writeHead(200, { 'Content-Type': 'text/html' });
     return res.end(renderPage());
