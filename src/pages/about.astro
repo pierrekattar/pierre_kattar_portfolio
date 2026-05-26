@@ -9,22 +9,19 @@ import Footer from '../components/Footer.astro';
   <main style="min-height:100vh;padding:9rem 2rem 5rem;">
 
     <style>
+      .about-photo { display: none; }
+      .about-photo-desktop { display: block; }
+
       @media (max-width: 768px) {
-        .about-grid {
-          display: block !important;
-        }
+        .about-grid { display: block !important; }
         .about-photo {
-          float: left;
-          width: 130px;
-          margin: 0 1.25rem 0.5rem 0;
-        }
-        .about-photo img {
-          width: 130px;
-          height: 170px;
-          object-fit: cover;
-          object-position: center bottom;
           display: block;
+          float: right;
+          width: 120px;
+          margin: 0 0 1rem 1.25rem;
         }
+        .about-photo img { width: 120px; height: auto; display: block; }
+        .about-photo-desktop { display: none; }
       }
     </style>
 
@@ -32,6 +29,16 @@ import Footer from '../components/Footer.astro';
 
       <!-- Text -->
       <div>
+        <!-- Photo floats inside text on mobile -->
+        <div class="about-photo">
+          <img
+            src="https://images.squarespace-cdn.com/content/v1/5e36b80361083b2de0d3ed2b/44157af4-1fb6-40c0-80a3-c865c367acda/PORTRAIT_1.jpg"
+            alt="Pierre Kattar"
+            style="width:100%;display:block;"
+          />
+          <p style="font-family:Arial,Helvetica,sans-serif;font-size:0.75rem;color:rgba(255,255,255,0.35);margin-top:0.5rem;">Photo by Isabelle Carbonell</p>
+        </div>
+
         <!-- Intro -->
         <p style="font-family:Arial,Helvetica,sans-serif;font-size:1.2rem;line-height:1.8;color:#ffffff;margin-bottom:3.5rem;">
           I'm an Emmy award-winning video journalist and documentary filmmaker. I thrive on the ground — hashing out the next shot, chasing the ever-changing thread of a story. People tell me they feel comfortable in front of my camera, which might be the credential I'm most proud of. My clients include The New York Times, NPR, PBS, and The World Bank.
@@ -65,8 +72,8 @@ import Footer from '../components/Footer.astro';
         </div>
       </div>
 
-      <!-- Photo -->
-      <div class="about-photo">
+      <!-- Photo (desktop only — hidden on mobile via CSS) -->
+      <div class="about-photo-desktop">
         <img
           src="https://images.squarespace-cdn.com/content/v1/5e36b80361083b2de0d3ed2b/44157af4-1fb6-40c0-80a3-c865c367acda/PORTRAIT_1.jpg"
           alt="Pierre Kattar"
