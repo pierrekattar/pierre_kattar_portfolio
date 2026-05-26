@@ -11,17 +11,18 @@ import Footer from '../components/Footer.astro';
     <style>
       @media (max-width: 768px) {
         .about-grid {
-          display: flex !important;
-          flex-direction: column;
-          gap: 2rem !important;
+          display: block !important;
         }
         .about-photo {
-          order: -1;
-          width: 140px;
+          float: left;
+          width: 130px;
+          margin: 0 1.25rem 0.5rem 0;
         }
         .about-photo img {
-          width: 140px;
-          height: auto;
+          width: 130px;
+          height: 170px;
+          object-fit: cover;
+          object-position: center bottom;
           display: block;
         }
       }
