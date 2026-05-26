@@ -8,38 +8,7 @@ import Footer from '../components/Footer.astro';
   <Header />
   <main style="min-height:100vh;padding:9rem 2rem 5rem;">
 
-    <style>
-      .about-grid {
-        max-width: 1100px;
-        margin: 0 auto;
-        display: grid;
-        grid-template-columns: 1fr 480px;
-        gap: 5rem;
-        align-items: start;
-      }
-      .about-photo img {
-        width: 100%;
-        display: block;
-      }
-      @media (max-width: 768px) {
-        .about-grid {
-          display: block;
-        }
-        .about-photo {
-          float: left;
-          width: 120px;
-          margin: 0 1.25rem 1rem 0;
-        }
-        .about-photo img {
-          width: 120px;
-          height: 120px;
-          object-fit: cover;
-          object-position: center top;
-        }
-      }
-    </style>
-
-    <div class="about-grid">
+    <div style="max-width:1100px;margin:0 auto;display:grid;grid-template-columns:1fr 480px;gap:5rem;align-items:start;">
 
       <!-- Text -->
       <div>
@@ -77,10 +46,11 @@ import Footer from '../components/Footer.astro';
       </div>
 
       <!-- Photo -->
-      <div class="about-photo">
+      <div>
         <img
           src="https://images.squarespace-cdn.com/content/v1/5e36b80361083b2de0d3ed2b/44157af4-1fb6-40c0-80a3-c865c367acda/PORTRAIT_1.jpg"
           alt="Pierre Kattar"
+          style="width:100%;display:block;"
         />
         <p style="font-family:Arial,Helvetica,sans-serif;font-size:0.75rem;color:rgba(255,255,255,0.35);margin-top:0.5rem;">Photo by Isabelle Carbonell</p>
       </div>
