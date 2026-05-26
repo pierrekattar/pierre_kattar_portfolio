@@ -44,7 +44,7 @@ const portfolioData = [...filmItems, ...stillItems];
 
 <Layout>
   <Header />
-  <main style="min-height:100vh;padding:9rem 2rem 3rem;">
+  <main class="index-main" style="min-height:100vh;padding:9rem 2rem 3rem;">
     <div style="max-width:1200px;margin:0 auto;">
 
       <!-- Controls row -->
@@ -102,6 +102,7 @@ const portfolioData = [...filmItems, ...stillItems];
           flex-shrink: 0;
         }
         @media (max-width: 600px) {
+          .index-main { padding-top: 11rem !important; }
           .sort-controls { display: none; }
           .filter-row { gap: 0.75rem 1.5rem; flex-wrap: wrap; }
           .filter-btn { font-size: 0.8rem; letter-spacing: 0.15em !important; }
