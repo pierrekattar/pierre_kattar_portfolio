@@ -9,21 +9,21 @@ export interface Still {
 
 export const stills: Still[] = [
   {
-    title: 'Secretary of Energy, Jennifer Granholm',
     category: 'interview-stills',
     thumbnail: 'https://images.squarespace-cdn.com/content/v1/5e36b80361083b2de0d3ed2b/1737488826580-GA1URCVZR30B8602O6AO/GranholmInterview_FINAL_EDIT.00_04_58_19.Still011-2.png',
+    title: 'Secretary of Energy, Jennifer Granholm',
     role: 'Director of Photography',
     client: 'Newsweek',
-    notes: 'A two person interview I lit in an hour and a half with. Crew consisted of me, a second shooter, a production assistant and a producer.  We used two 300 watt lights with soft boxes, a tube light to light the flags in the background and reflectors to brighten up the shadows. ',
-  },
+    notes: 'A two person interview I lit in an hour and a half with a crew consisted of me, a second shooter, a production assistant and a producer.  We used two 300 watt lights with soft boxes, a tube light to light the flags in the background and reflectors to brighten up the shadows. ',
+},
   {
-    title: 'Secretary of Energy, Jennifer Granholm',
     category: 'interview-stills',
     thumbnail: 'https://images.squarespace-cdn.com/content/v1/5e36b80361083b2de0d3ed2b/1737488869942-TCVFWZTTRCMRZ9DU6QZR/GranholmInterview_FINAL_EDIT.00_06_14_16.Still015.png',
+    title: 'Secretary of Energy, Jennifer Granholm',
     role: 'Director of Photography',
     client: 'Newsweek',
-    notes: 'A two person interview I lit in an hour and a half with. Crew consisted of me, a second shooter, a production assistant and a producer.  We used two 300 watt lights with soft boxes, a tube light to light the flags in the background and reflectors to brighten up the shadows. ',
-  },
+    notes: 'A two person interview I lit in an hour and a half with a crew consisted of me, a second shooter, a production assistant and a producer.  We used two 300 watt lights with soft boxes, a tube light to light the flags in the background and reflectors to brighten up the shadows. ',
+},
   {
     title: 'The Three Strikes Project',
     category: 'interview-stills',
