@@ -8,7 +8,26 @@ import Footer from '../components/Footer.astro';
   <Header />
   <main style="min-height:100vh;padding:9rem 2rem 5rem;">
 
-    <div style="max-width:1100px;margin:0 auto;display:grid;grid-template-columns:1fr 480px;gap:5rem;align-items:start;">
+    <style>
+      @media (max-width: 768px) {
+        .about-grid {
+          display: flex !important;
+          flex-direction: column;
+          gap: 2rem !important;
+        }
+        .about-photo {
+          order: -1;
+          width: 140px;
+        }
+        .about-photo img {
+          width: 140px;
+          height: auto;
+          display: block;
+        }
+      }
+    </style>
+
+    <div class="about-grid" style="max-width:1100px;margin:0 auto;display:grid;grid-template-columns:1fr 480px;gap:5rem;align-items:start;">
 
       <!-- Text -->
       <div>
@@ -46,7 +65,7 @@ import Footer from '../components/Footer.astro';
       </div>
 
       <!-- Photo -->
-      <div>
+      <div class="about-photo">
         <img
           src="https://images.squarespace-cdn.com/content/v1/5e36b80361083b2de0d3ed2b/44157af4-1fb6-40c0-80a3-c865c367acda/PORTRAIT_1.jpg"
           alt="Pierre Kattar"

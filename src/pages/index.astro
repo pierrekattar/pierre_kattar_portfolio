@@ -56,7 +56,7 @@ const portfolioData = [...filmItems, ...stillItems];
             <button
               class="filter-btn"
               data-filter={cat}
-              style={`font-family:Arial,Helvetica,sans-serif;letter-spacing:0.2em;background:none;border:none;cursor:pointer;padding:0 0 4px 0;color:${i === 0 ? '#ffffff' : 'rgba(255,255,255,0.45)'};border-bottom:${i === 0 ? '1px solid #ffffff' : '1px solid transparent'};`}
+              style={`font-family:Arial,Helvetica,sans-serif;letter-spacing:0.2em;background:none;border:none;cursor:pointer;padding:0;color:${i === 0 ? '#ffffff' : 'rgba(255,255,255,0.45)'};`}
             >
               {cat}
             </button>
@@ -108,15 +108,16 @@ const portfolioData = [...filmItems, ...stillItems];
             gap: 1rem;
           }
           .filter-row {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 0.75rem 1.5rem;
+            display: flex;
+            flex-direction: row;
+            flex-wrap: wrap;
+            gap: 0.5rem 1.25rem;
             width: 100%;
           }
           .filter-btn {
-            font-size: 0.75rem;
-            letter-spacing: 0.15em !important;
-            white-space: normal;
+            font-size: 0.72rem;
+            letter-spacing: 0.12em !important;
+            white-space: nowrap;
           }
         }
       </style>
@@ -175,7 +176,6 @@ const portfolioData = [...filmItems, ...stillItems];
     filterBtns.forEach(b => {
       const on = b.dataset.filter === activeFilter;
       b.style.color = on ? '#fff' : 'rgba(255,255,255,0.45)';
-      b.style.borderBottom = on ? '1px solid #fff' : '1px solid transparent';
     });
   }
 
