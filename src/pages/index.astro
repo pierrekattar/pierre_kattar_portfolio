@@ -90,19 +90,26 @@ const portfolioData = [...filmItems, ...stillItems];
         }
         .filter-row {
           display: flex;
-          flex-wrap: wrap;
-          gap: 1.25rem 2rem;
+          gap: 2rem;
+          overflow-x: auto;
+          -webkit-overflow-scrolling: touch;
+          scrollbar-width: none;
+          flex-shrink: 1;
+          min-width: 0;
         }
+        .filter-row::-webkit-scrollbar { display: none; }
         .filter-btn {
           font-size: 0.95rem;
+          white-space: nowrap;
+          flex-shrink: 0;
         }
         @media (max-width: 600px) {
           .filter-btn {
-            font-size: 0.75rem;
-            letter-spacing: 0.12em !important;
+            font-size: 0.78rem;
+            letter-spacing: 0.15em !important;
           }
           .filter-row {
-            gap: 0.9rem 1.25rem;
+            gap: 1.25rem;
           }
         }
       </style>
