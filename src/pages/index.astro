@@ -94,8 +94,6 @@ const portfolioData = [...filmItems, ...stillItems];
           overflow-x: auto;
           -webkit-overflow-scrolling: touch;
           scrollbar-width: none;
-          flex-shrink: 1;
-          min-width: 0;
         }
         .filter-row::-webkit-scrollbar { display: none; }
         .filter-btn {
@@ -104,12 +102,17 @@ const portfolioData = [...filmItems, ...stillItems];
           flex-shrink: 0;
         }
         @media (max-width: 600px) {
+          .controls-row {
+            flex-direction: column;
+            align-items: flex-start;
+          }
+          .filter-row {
+            width: 100%;
+            gap: 1.5rem;
+          }
           .filter-btn {
             font-size: 0.78rem;
             letter-spacing: 0.15em !important;
-          }
-          .filter-row {
-            gap: 1.25rem;
           }
         }
       </style>
