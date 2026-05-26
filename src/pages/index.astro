@@ -48,15 +48,15 @@ const portfolioData = [...filmItems, ...stillItems];
     <div style="max-width:1200px;margin:0 auto;">
 
       <!-- Controls row -->
-      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:2.5rem;flex-wrap:wrap;gap:1.5rem;">
+      <div class="controls-row">
 
         <!-- Category filters -->
-        <div style="display:flex;gap:2.5rem;">
+        <div class="filter-row">
           {['JOURNALISM', 'DOCUMENTARY', 'FUN', 'INTERVIEW STILLS'].map((cat, i) => (
             <button
               class="filter-btn"
               data-filter={cat}
-              style={`font-family:Arial,Helvetica,sans-serif;font-size:0.95rem;letter-spacing:0.25em;background:none;border:none;cursor:pointer;padding:0 0 4px 0;color:${i === 0 ? '#ffffff' : 'rgba(255,255,255,0.45)'};border-bottom:${i === 0 ? '1px solid #ffffff' : '1px solid transparent'};`}
+              style={`font-family:Arial,Helvetica,sans-serif;letter-spacing:0.2em;background:none;border:none;cursor:pointer;padding:0 0 4px 0;color:${i === 0 ? '#ffffff' : 'rgba(255,255,255,0.45)'};border-bottom:${i === 0 ? '1px solid #ffffff' : '1px solid transparent'};`}
             >
               {cat}
             </button>
@@ -64,7 +64,7 @@ const portfolioData = [...filmItems, ...stillItems];
         </div>
 
         <!-- Sort controls -->
-        <div style="display:flex;align-items:center;gap:0.75rem;">
+        <div style="display:flex;align-items:center;gap:0.75rem;flex-shrink:0;">
           <span style="font-family:Arial,Helvetica,sans-serif;font-size:0.65rem;letter-spacing:0.25em;color:rgba(255,255,255,0.3);text-transform:uppercase;">Group by</span>
           {['CLIENT', 'GENRE'].map(s => (
             <button
@@ -78,6 +78,34 @@ const portfolioData = [...filmItems, ...stillItems];
         </div>
 
       </div>
+
+      <style>
+        .controls-row {
+          display: flex;
+          align-items: center;
+          justify-content: space-between;
+          margin-bottom: 2.5rem;
+          flex-wrap: wrap;
+          gap: 1.5rem;
+        }
+        .filter-row {
+          display: flex;
+          flex-wrap: wrap;
+          gap: 1.25rem 2rem;
+        }
+        .filter-btn {
+          font-size: 0.95rem;
+        }
+        @media (max-width: 600px) {
+          .filter-btn {
+            font-size: 0.75rem;
+            letter-spacing: 0.12em !important;
+          }
+          .filter-row {
+            gap: 0.9rem 1.25rem;
+          }
+        }
+      </style>
 
       <!-- Grid (populated by JS) -->
       <div id="film-grid"></div>
