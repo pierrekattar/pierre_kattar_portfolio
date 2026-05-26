@@ -6,13 +6,14 @@ import Footer from '../components/Footer.astro';
 
 <Layout title="About | Pierre Kattar">
   <Header />
-  <main style="min-height:100vh;padding:9rem 2rem 5rem;">
+  <main class="about-main" style="min-height:100vh;padding:9rem 2rem 5rem;">
 
     <style>
       .about-photo { display: none; }
       .about-photo-desktop { display: block; }
 
       @media (max-width: 768px) {
+        .about-main { padding-top: 11rem !important; }
         .about-grid { display: block !important; }
         .about-photo {
           display: block;
