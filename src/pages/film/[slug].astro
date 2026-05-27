@@ -73,7 +73,7 @@ const autoplayUrl = (() => {
       <div class="mx-auto max-w-4xl px-6 lg:px-8">
         <!-- Back Link -->
         <a
-          href={`/#${film.category}`}
+          href={`/?filter=${film.category.toUpperCase()}`}
           class="mb-8 inline-flex items-center gap-2 text-sm text-muted-foreground transition-colors hover:text-foreground"
         >
           <svg
@@ -93,9 +93,8 @@ const autoplayUrl = (() => {
           Back to {capitalize(film.category)}
         </a>
 
-        <!-- Title & Logline -->
+        <!-- Title -->
         <h1 class="text-4xl font-bold text-foreground sm:text-5xl">{film.title}</h1>
-        <p class="mt-4 text-xl italic text-muted-foreground">{film.logline}</p>
         <p class="mt-2 text-sm text-muted-foreground">
           {film.year} • {capitalize(film.category)}
         </p>
@@ -146,7 +145,6 @@ const autoplayUrl = (() => {
 
         <!-- Gallery -->
         <div class="mt-16">
-          <h2 class="mb-6 text-sm font-medium tracking-[0.3em] text-muted-foreground">GALLERY</h2>
           <div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
             {
               film.gallery.map((image, index) => (
@@ -163,20 +161,6 @@ const autoplayUrl = (() => {
           </div>
         </div>
 
-        <!-- Credits -->
-        <div class="mt-16 pb-20">
-          <h2 class="mb-6 text-sm font-medium tracking-[0.3em] text-muted-foreground">CREDITS</h2>
-          <div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
-            {
-              film.credits.map((credit) => (
-                <div class="flex justify-between border-b border-border py-3">
-                  <span class="text-muted-foreground">{credit.role}</span>
-                  <span class="text-foreground">{credit.name}</span>
-                </div>
-              ))
-            }
-          </div>
-        </div>
       </div>
     </section>
   </main>

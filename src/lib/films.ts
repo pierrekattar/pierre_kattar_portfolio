@@ -1019,6 +1019,22 @@ export const films: Film[] = [
   },
   // Documentary
   {
+    slug: "the-brilliance-of-my-world",
+    title: "The Brilliance of My World",
+    category: "documentary",
+    logline: "The Brilliance of My World",
+    year: 2012,
+    synopsis: "",
+    thumbnail: "https://i.vimeocdn.com/video/530814866-a22cc5bfec71b57965d50071826d98c587df4b7bbd789d53b501a1327d2f94f2-d_295x166?region=us",
+    heroImage: "https://i.vimeocdn.com/video/530814866-a22cc5bfec71b57965d50071826d98c587df4b7bbd789d53b501a1327d2f94f2-d_295x166?region=us",
+    trailerUrl: "https://player.vimeo.com/video/44453156",
+    gallery: [],
+    role: "Cinematographer, Editor, Producer",
+    client: "Self",
+    genre: "Independent Documentary Short",
+    credits: [{ role: "Director of Photography", name: "Pierre Kattar" }],
+  },
+  {
     slug: "no-war-with-iran-protests-dc",
     title: '"No War with Iran" Protests in D.C.',
     category: "documentary",
