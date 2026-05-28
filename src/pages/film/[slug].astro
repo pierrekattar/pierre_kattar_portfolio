@@ -94,7 +94,7 @@ const autoplayUrl = (() => {
         </a>
 
         <!-- Title -->
-        <h1 class="text-4xl font-bold text-foreground sm:text-5xl">{film.title}</h1>
+        <h1 style="font-family:Arial,Helvetica,sans-serif;font-size:1.5rem;font-weight:600;color:rgba(255,255,255,0.65);">{film.title}</h1>
         <p class="mt-2 text-sm text-muted-foreground">
           {film.year} • {capitalize(film.category)}
         </p>
@@ -105,31 +105,31 @@ const autoplayUrl = (() => {
             {film.role && (
               <div class="flex gap-3 text-sm">
                 <span class="w-28 shrink-0 text-muted-foreground">Role</span>
-                <span class="text-foreground">{film.role}</span>
+                <span style="color:rgba(255,255,255,0.65);">{film.role}</span>
               </div>
             )}
             {film.genre && (
               <div class="flex gap-3 text-sm">
                 <span class="w-28 shrink-0 text-muted-foreground">Genre</span>
-                <span class="text-foreground">{film.genre}</span>
+                <span style="color:rgba(255,255,255,0.65);">{film.genre}</span>
               </div>
             )}
             {film.client && (
               <div class="flex gap-3 text-sm">
                 <span class="w-28 shrink-0 text-muted-foreground">Client</span>
-                <span class="text-foreground">{film.client}</span>
+                <span style="color:rgba(255,255,255,0.65);">{film.client}</span>
               </div>
             )}
             {film.recognition && (
               <div class="flex gap-3 text-sm">
                 <span class="w-28 shrink-0 text-muted-foreground">Recognition</span>
-                <span class="text-foreground">{film.recognition}</span>
+                <span style="color:rgba(255,255,255,0.65);">{film.recognition}</span>
               </div>
             )}
             {film.notes && (
               <div class="flex gap-3 text-sm">
                 <span class="w-28 shrink-0 text-muted-foreground">{film.notes.split('\n')[0]}</span>
-                <span class="text-foreground" style="white-space: pre-line">{film.notes.split('\n').slice(1).join('\n')}</span>
+                <span style="color:rgba(255,255,255,0.65);white-space:pre-line;">{film.notes.split('\n').slice(1).join('\n')}</span>
               </div>
             )}
           </div>

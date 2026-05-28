@@ -73,13 +73,13 @@ export const stills: Still[] = [
     notes: 'The challenge was to film each participant in their office space. Three different setups, all requiring different lighting. All was completed with one 300 watt, one 250 watt and a reflector. We lit the space and dressed the background. We bounced the 300 watt on the wall opposite the participant and filled in the shadow with a reflector. ',
   },
   {
-    title: 'Self Portrait',
     category: 'interview-stills',
     thumbnail: 'https://images.squarespace-cdn.com/content/v1/5e36b80361083b2de0d3ed2b/31451fe6-7cdb-4f08-966c-2139269cb3de/08b-2.jpg',
+    title: 'Self Portrait',
     role: 'Director of Photography',
     client: 'Self',
-    notes: 'The challenge was using the minimal lights I have to make a portrait of myself. One 250 watt bulb through two layers of diffusion (softbox and silk). Small led to accent the guitar and black wrap on the lightbulb to keep it dim. ',
-  },
+    notes: 'The challenge was to light a self-portrait using only the lights I owned at the time: an old 250W tungsten Lowel Rifa, a small Litepanels LED, and my apartment\'s overhead fixture. I pushed the Rifa through two layers of diffusion (its built-in softbox plus a layer of china silk), dimmed the Litepanels and aimed it at my guitar for a touch of accent, and wrapped the overhead in cinefoil to knock it down. Thanks to Vanessa Carr and Dochouse for the transformative training.',
+},
   {
     title: 'I Am a Voter',
     category: 'interview-stills',

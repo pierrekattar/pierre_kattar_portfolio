@@ -1,0 +1,75 @@
+---
+import Layout from '../layouts/Layout.astro';
+import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
+import { films } from '../lib/films';
+
+const journalism = films.filter(f => f.category === 'journalism');
+const documentary = films.filter(f => f.category === 'documentary');
+const fun = films.filter(f => f.category === 'fun');
+
+const sections = [
+  { label: 'Journalism', key: 'journalism', items: journalism },
+  { label: 'Documentary', key: 'documentary', items: documentary },
+  { label: 'Fun', key: 'fun', items: fun },
+];
+---
+
+<Layout title="Video Pages | Pierre Kattar">
+  <Header />
+  <main style="min-height:100vh;padding:9rem 2rem 5rem;">
+    <div style="max-width:900px;margin:0 auto;">
+
+      <!-- Filter nav -->
+      <div style="display:flex;gap:2rem;margin-bottom:3rem;">
+        {sections.map((section, i) => (
+          <button
+            class="vp-filter"
+            data-key={section.key}
+            style={`font-family:Arial,Helvetica,sans-serif;font-size:0.95rem;letter-spacing:0.2em;background:none;border:none;cursor:pointer;padding:0;color:${i === 0 ? '#fff' : 'rgba(255,255,255,0.45)'};`}
+          >
+            {section.label.toUpperCase()}
+          </button>
+        ))}
+      </div>
+
+      <!-- Sections -->
+      {sections.map((section, i) => (
+        <div class="vp-section" data-key={section.key} style={`margin-bottom:3.5rem;${i !== 0 ? 'display:none;' : ''}`}>
+          <ul style="list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:0.5rem;">
+            {section.items.map(film => (
+              <li>
+                <a
+                  href={`/film/${film.slug}`}
+                  style="font-family:Arial,Helvetica,sans-serif;font-size:0.9rem;color:rgba(255,255,255,0.75);text-decoration:none;"
+                  onmouseover="this.style.color='#fff'"
+                  onmouseout="this.style.color='rgba(255,255,255,0.75)'"
+                >
+                  {film.title}
+                </a>
+              </li>
+            ))}
+          </ul>
+        </div>
+      ))}
+
+    </div>
+  </main>
+  <Footer />
+</Layout>
+
+<script>
+  const btns = document.querySelectorAll('.vp-filter');
+  const sections = document.querySelectorAll('.vp-section');
+
+  btns.forEach(btn => {
+    btn.addEventListener('click', () => {
+      const key = (btn as HTMLElement).dataset.key;
+      btns.forEach(b => (b as HTMLElement).style.color = 'rgba(255,255,255,0.45)');
+      (btn as HTMLElement).style.color = '#fff';
+      sections.forEach(s => {
+        (s as HTMLElement).style.display = (s as HTMLElement).dataset.key === key ? 'block' : 'none';
+      });
+    });
+  });
+</script>

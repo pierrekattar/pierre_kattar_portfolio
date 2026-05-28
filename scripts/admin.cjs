@@ -114,11 +114,11 @@ function saveStill(thumbnail, title, role, client, notes) {
   if (!match) return false;
 
   let block = match[1];
-  // Remove existing title/role/client/notes lines
-  block = block.replace(/\n\s*title:\s*['"][^'"]*['"],?/g, '');
-  block = block.replace(/\n\s*role:\s*['"][^'"]*['"],?/g, '');
-  block = block.replace(/\n\s*client:\s*['"][^'"]*['"],?/g, '');
-  block = block.replace(/\n\s*notes:\s*['"][^'"]*['"],?/g, '');
+  // Remove existing title/role/client/notes lines (handle escaped quotes inside values)
+  block = block.replace(/\n\s*title:\s*'(?:[^'\\]|\\.)*',?/g, '');
+  block = block.replace(/\n\s*role:\s*'(?:[^'\\]|\\.)*',?/g, '');
+  block = block.replace(/\n\s*client:\s*'(?:[^'\\]|\\.)*',?/g, '');
+  block = block.replace(/\n\s*notes:\s*'(?:[^'\\]|\\.)*',?/g, '');
 
   // Insert before the closing brace
   const insertLines = [];
@@ -163,6 +163,7 @@ function renderPage() {
     `<label><input type="checkbox" class="rec-cb" value="${esc(r)}">${esc(r)}</label>`
   ).join('') + `<button class="ms-add-btn" type="button">+ Add new…</button>`;
 
+  const sectionMap = {};
   const sections = ['journalism', 'documentary', 'fun'].map(cat => {
     const rows = films.filter(f => f.category === cat).map(f => `
       <tr data-slug="${esc(f.slug)}" data-role="${esc(f.role)}" data-client="${esc(f.client)}" data-genre="${esc(f.genre)}" data-recognition="${esc(f.recognition)}" data-notes="${esc(f.notes)}">
@@ -192,7 +193,7 @@ function renderPage() {
         <td class="status"></td>
       </tr>`).join('');
 
-    return `
+    const html = `
       <h2>${cat.charAt(0).toUpperCase() + cat.slice(1)}</h2>
       <table>
         <thead><tr>
@@ -207,6 +208,8 @@ function renderPage() {
         </tr></thead>
         <tbody>${rows}</tbody>
       </table>`;
+    sectionMap[cat] = html;
+    return html;
   }).join('');
 
   const stillsSection = `
@@ -260,8 +263,14 @@ function renderPage() {
   <style>
     *{box-sizing:border-box;margin:0;padding:0}
     body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
-         background:#0f0f0f;color:#e5e5e5;padding:32px 24px}
-    h1{font-size:1.4rem;font-weight:600;margin-bottom:32px;color:#fff}
+         background:#0f0f0f;color:#e5e5e5;padding:0 24px 32px}
+    #top-nav{position:sticky;top:0;z-index:150;background:#0f0f0f;padding:24px 0 16px;
+             display:flex;gap:2rem;border-bottom:1px solid #1a1a1a;margin-bottom:32px}
+    .nav-btn{font-family:inherit;font-size:.95rem;letter-spacing:.2em;background:none;
+             border:none;cursor:pointer;padding:0;color:rgba(255,255,255,0.45);
+             text-transform:uppercase;transition:color .2s}
+    .nav-btn.active{color:#fff}
+    h1{font-size:1.4rem;font-weight:600;margin-bottom:32px;color:#fff;display:none}
     h2{font-size:.7rem;letter-spacing:.25em;text-transform:uppercase;
        color:#666;margin:44px 0 12px}
     table{width:100%;border-collapse:collapse;}
@@ -344,9 +353,17 @@ function renderPage() {
   </style>
 </head>
 <body>
+  <div id="top-nav">
+    <button class="nav-btn active" data-section="journalism">Journalism</button>
+    <button class="nav-btn" data-section="documentary">Documentary</button>
+    <button class="nav-btn" data-section="fun">Fun</button>
+    <button class="nav-btn" data-section="stills">Interview Stills</button>
+  </div>
   <h1>Film Metadata</h1>
-  ${sections}
-  ${stillsSection}
+  <div data-section-panel="journalism">${sectionMap['journalism']}</div>
+  <div data-section-panel="documentary" style="display:none">${sectionMap['documentary']}</div>
+  <div data-section-panel="fun" style="display:none">${sectionMap['fun']}</div>
+  <div data-section-panel="stills" style="display:none">${stillsSection}</div>
 
   <div id="vid-modal">
     <div id="vid-box">
@@ -357,6 +374,18 @@ function renderPage() {
   </div>
 
   <script>
+    // ── Section nav ───────────────────────────────────────────────────────────
+    document.querySelectorAll('.nav-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const key = btn.dataset.section;
+        document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        document.querySelectorAll('[data-section-panel]').forEach(panel => {
+          panel.style.display = panel.dataset.sectionPanel === key ? 'block' : 'none';
+        });
+      });
+    });
+
     const ROLES = ${JSON.stringify(ROLES)};
 
     // ── Custom option storage ─────────────────────────────────────────────────
@@ -593,7 +622,7 @@ function renderPage() {
     const stillDebounceTimers = new WeakMap();
     function scheduleStillSave(row) {
       clearTimeout(stillDebounceTimers.get(row));
-      stillDebounceTimers.set(row, setTimeout(() => saveStillRow(row), 400));
+      stillDebounceTimers.set(row, setTimeout(() => saveStillRow(row), 2000));
     }
 
     async function saveStillRow(row) {
@@ -626,7 +655,7 @@ function renderPage() {
 
     function scheduleSave(row) {
       clearTimeout(debounceTimers.get(row));
-      debounceTimers.set(row, setTimeout(() => saveRow(row), 400));
+      debounceTimers.set(row, setTimeout(() => saveRow(row), 2000));
     }
 
     async function saveRow(row) {
