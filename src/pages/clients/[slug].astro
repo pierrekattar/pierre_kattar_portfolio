@@ -49,15 +49,15 @@ const subtitle = [
 
 <Layout title={`${displayName} | Pierre Kattar`}>
   <Header />
-  <main style="min-height:100vh;padding:9rem 2rem 5rem;">
+  <main style="min-height:100vh;padding:14rem 2rem 5rem;">
     <div style="max-width:1200px;margin:0 auto;">
 
       <!-- Page header -->
-      <div style="margin-bottom:3.5rem;border-bottom:1px solid rgba(255,255,255,0.1);padding-bottom:2rem;text-align:center;">
-        <h1 style="font-family:Arial,Helvetica,sans-serif;font-size:2rem;font-weight:700;letter-spacing:0.08em;color:#fff;margin-bottom:0.5rem;text-transform:uppercase;">{displayName}</h1>
+      <div style="margin-bottom:3.5rem;">
+        <h1 style="font-family:Arial,Helvetica,sans-serif;font-size:1rem;letter-spacing:0.3em;color:rgba(255,255,255,0.65);text-transform:uppercase;margin-bottom:0.5rem;text-align:center;">{displayName}</h1>
         <p style="font-family:Arial,Helvetica,sans-serif;font-size:0.8rem;color:rgba(255,255,255,0.35);letter-spacing:0.1em;">{subtitle}</p>
         {description && (
-          <p style="font-family:Arial,Helvetica,sans-serif;font-size:1.2rem;line-height:1.8;color:rgba(255,255,255,0.75);max-width:750px;margin:1.5rem auto 0;">{description}</p>
+          <p style="font-family:Arial,Helvetica,sans-serif;font-size:1rem;line-height:1.8;color:rgba(255,255,255,0.65);max-width:750px;margin:1.5rem 0 0;">{description}</p>
         )}
       </div>
 

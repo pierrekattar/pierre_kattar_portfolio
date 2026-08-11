@@ -43,69 +43,29 @@ const portfolioData = [...filmItems, ...stillItems];
 ---
 
 <Layout>
-  <Header />
-  <main class="index-main" style="min-height:100vh;padding:9rem 2rem 3rem;">
+  <Header>
+    <div slot="nav-right" style="display:flex;align-items:center;gap:0.75rem;">
+      <span style="font-family:Arial,Helvetica,sans-serif;font-size:0.65rem;letter-spacing:0.25em;color:rgba(255,255,255,0.3);text-transform:uppercase;">Group by</span>
+      {['CLIENT', 'GENRE'].map(s => (
+        <button
+          class="sort-btn"
+          data-sort={s.toLowerCase()}
+          style="font-family:Arial,Helvetica,sans-serif;font-size:0.65rem;letter-spacing:0.2em;text-transform:uppercase;background:none;border:1px solid rgba(255,255,255,0.2);border-radius:2px;padding:2px 10px;cursor:pointer;color:rgba(255,255,255,0.4);transition:color 0.2s,border-color 0.2s;line-height:1rem;"
+        >
+          {s}
+        </button>
+      ))}
+    </div>
+  </Header>
+  <main class="index-main" style="min-height:100vh;padding:14rem 2rem 3rem;">
     <div style="max-width:1200px;margin:0 auto;">
 
-      <!-- Controls row -->
-      <div class="controls-row">
-
-        <!-- Category filters -->
-        <div class="filter-row">
-          {['JOURNALISM', 'DOCUMENTARY', 'FUN', 'INTERVIEW STILLS'].map((cat, i) => (
-            <button
-              class="filter-btn"
-              data-filter={cat}
-              style={`font-family:Arial,Helvetica,sans-serif;letter-spacing:0.2em;background:none;border:none;cursor:pointer;padding:0;color:${i === 0 ? '#ffffff' : 'rgba(255,255,255,0.45)'};`}
-            >
-              {cat}
-            </button>
-          ))}
-        </div>
-
-        <!-- Sort controls -->
-        <div class="sort-controls" style="display:flex;align-items:center;gap:0.75rem;flex-shrink:0;">
-          <span style="font-family:Arial,Helvetica,sans-serif;font-size:0.65rem;letter-spacing:0.25em;color:rgba(255,255,255,0.3);text-transform:uppercase;">Group by</span>
-          {['CLIENT', 'GENRE'].map(s => (
-            <button
-              class="sort-btn"
-              data-sort={s.toLowerCase()}
-              style="font-family:Arial,Helvetica,sans-serif;font-size:0.65rem;letter-spacing:0.2em;text-transform:uppercase;background:none;border:1px solid rgba(255,255,255,0.2);border-radius:2px;padding:3px 10px;cursor:pointer;color:rgba(255,255,255,0.4);transition:color 0.2s,border-color 0.2s;"
-            >
-              {s}
-            </button>
-          ))}
-        </div>
-
-      </div>
+      <!-- Page title (updates with active filter) -->
+      <h1 id="page-category-title" style="font-family:Arial,Helvetica,sans-serif;font-size:1rem;letter-spacing:0.3em;color:rgba(255,255,255,0.65);text-transform:uppercase;margin-bottom:2.5rem;text-align:center;"></h1>
 
       <style>
-        .controls-row {
-          display: flex;
-          align-items: center;
-          justify-content: space-between;
-          margin-bottom: 2.5rem;
-          flex-wrap: wrap;
-          gap: 1.5rem;
-        }
-        .filter-row {
-          display: flex;
-          gap: 2rem;
-          overflow-x: auto;
-          -webkit-overflow-scrolling: touch;
-          scrollbar-width: none;
-        }
-        .filter-row::-webkit-scrollbar { display: none; }
-        .filter-btn {
-          font-size: 0.95rem;
-          white-space: nowrap;
-          flex-shrink: 0;
-        }
         @media (max-width: 600px) {
           .index-main { padding-top: 13rem !important; }
-          .sort-controls { display: none; }
-          .filter-row { gap: 0.75rem 1.5rem; flex-wrap: wrap; }
-          .filter-btn { font-size: 0.8rem; letter-spacing: 0.15em !important; }
         }
       </style>
 
@@ -134,21 +94,16 @@ const portfolioData = [...filmItems, ...stillItems];
   let activeFilter = new URLSearchParams(window.location.search).get('filter') || 'JOURNALISM';
   let activeSort = '';
 
-  const filterBtns = document.querySelectorAll('.filter-btn');
   const sortBtns = document.querySelectorAll('.sort-btn');
   const grid = document.getElementById('film-grid');
+  const pageCategoryTitle = document.getElementById('page-category-title');
   const modal = document.getElementById('film-modal');
   const modalPlayer = document.getElementById('modal-player');
   const modalInfo = document.getElementById('modal-info');
 
-  // ── Filter buttons ──
-  filterBtns.forEach(btn => {
-    btn.addEventListener('click', () => {
-      activeFilter = btn.dataset.filter;
-      updateFilterStyles();
-      buildGrid();
-    });
-  });
+  function updatePageTitle() {
+    if (pageCategoryTitle) pageCategoryTitle.textContent = activeFilter;
+  }
 
   // ── Sort buttons (toggle) ──
   sortBtns.forEach(btn => {
@@ -158,13 +113,6 @@ const portfolioData = [...filmItems, ...stillItems];
       buildGrid();
     });
   });
-
-  function updateFilterStyles() {
-    filterBtns.forEach(b => {
-      const on = b.dataset.filter === activeFilter;
-      b.style.color = on ? '#fff' : 'rgba(255,255,255,0.45)';
-    });
-  }
 
   function updateSortStyles() {
     sortBtns.forEach(b => {
@@ -259,11 +207,6 @@ const portfolioData = [...filmItems, ...stillItems];
       }
     }
 
-    // Dim filter buttons when group-by is active
-    filterBtns.forEach(b => {
-      b.style.opacity = activeSort ? '0.3' : '1';
-      b.style.pointerEvents = activeSort ? 'none' : '';
-    });
   }
 
   // ── Modal ──
@@ -342,7 +285,7 @@ const portfolioData = [...filmItems, ...stillItems];
   document.addEventListener('keydown', e => { if (e.key === 'Escape') closeModal(); });
 
   // ── Init ──
-  updateFilterStyles();
   updateSortStyles();
+  updatePageTitle();
   buildGrid();
 </script>
