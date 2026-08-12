@@ -6,10 +6,38 @@
 const http = require('http');
 const fs   = require('fs');
 const path = require('path');
+const { exec } = require('child_process');
 
-const FILMS_PATH  = path.resolve(__dirname, '../src/lib/films.ts');
-const STILLS_PATH = path.resolve(__dirname, '../src/lib/stills.ts');
+const FILMS_PATH   = path.resolve(__dirname, '../src/lib/films.ts');
+const STILLS_PATH  = path.resolve(__dirname, '../src/lib/stills.ts');
+const PROJECT_ROOT = path.resolve(__dirname, '..');
 const PORT = 3001;
+
+let pushTimer = null;
+function schedulePush() {
+  if (pushTimer) clearTimeout(pushTimer);
+  pushTimer = setTimeout(() => {
+    const filmsTmp  = '/tmp/admin_push_films.ts';
+    const stillsTmp = '/tmp/admin_push_stills.ts';
+    try {
+      fs.copyFileSync(FILMS_PATH, filmsTmp);
+      fs.copyFileSync(STILLS_PATH, stillsTmp);
+    } catch(e) { console.error('[auto-push] backup failed:', e.message); return; }
+    const cmd = [
+      `cd "${PROJECT_ROOT}"`,
+      `git fetch origin`,
+      `git reset --hard origin/main`,
+      `cp "${filmsTmp}" "${FILMS_PATH}"`,
+      `cp "${stillsTmp}" "${STILLS_PATH}"`,
+      `git add src/lib/films.ts src/lib/stills.ts`,
+      `git diff --cached --quiet || (git commit -m "Admin: update metadata" && git push origin main)`,
+    ].join(' && ');
+    exec(cmd, (err, stdout, stderr) => {
+      if (err) console.error('[auto-push] error:', stderr || err.message);
+      else console.log('[auto-push] changes pushed to GitHub');
+    });
+  }, 5000);
+}
 
 
 const ROLES       = ['Director', 'Director of Photography', 'Cinematographer', 'Editor', 'Producer', 'Writer', 'Narrator', 'Reporter', 'Video Journalist'];
@@ -33,7 +61,7 @@ function parseFilms() {
     }
     if (!current) continue;
     let m;
-    if (!current.title     && (m = line.match(/^\s+title:\s*"([^"]+)"/)))                       current.title     = m[1];
+    if (!current.title     && (m = line.match(/^\s+title:\s*"([^"]+)"|^\s+title:\s*'([^']+)'/))) current.title = m[1] || m[2];
     if (!current.category  && (m = line.match(/^\s+category:\s*"(journalism|documentary|fun)"/))) current.category = m[1];
     if (!current.thumbnail  && (m = line.match(/^\s+thumbnail:\s*"([^"]+)"/)))                   current.thumbnail  = m[1];
     if (!current.trailerUrl && (m = line.match(/^\s+trailerUrl:\s*"([^"]+)"/)))                  current.trailerUrl = m[1];
@@ -49,10 +77,19 @@ function parseFilms() {
 
 // ─── Write back to films.ts ───────────────────────────────────────────────────
 
-function saveFilm(slug, role, client, genre, recognition, notes) {
+function saveFilm(slug, title, role, client, genre, recognition, notes) {
   const lines = fs.readFileSync(FILMS_PATH, 'utf-8').split('\n');
   const slugIdx = lines.findIndex(l => l.includes(`slug: "${slug}"`));
   if (slugIdx === -1) return false;
+
+  if (title) {
+    for (let i = slugIdx + 1; i < Math.min(slugIdx + 10, lines.length); i++) {
+      if (/^\s+title:\s*['"]/.test(lines[i])) {
+        lines[i] = `    title: "${title.replace(/\\/g, '\\\\').replace(/"/g, '\\"')}",`;
+        break;
+      }
+    }
+  }
 
   let creditsIdx = -1;
   for (let i = slugIdx + 1; i < Math.min(slugIdx + 25, lines.length); i++) {
@@ -167,7 +204,7 @@ function renderPage() {
   const sections = ['journalism', 'documentary', 'fun'].map(cat => {
     const rows = films.filter(f => f.category === cat).map(f => `
       <tr data-slug="${esc(f.slug)}" data-role="${esc(f.role)}" data-client="${esc(f.client)}" data-genre="${esc(f.genre)}" data-recognition="${esc(f.recognition)}" data-notes="${esc(f.notes)}">
-        <td class="title">${esc(f.title)}</td>
+        <td class="title"><input class="title-input" type="text" value="${esc(f.title)}" style="width:100%;background:#181818;border:1px solid #2e2e2e;border-radius:4px;color:#e5e5e5;font-size:.85rem;padding:6px 10px;outline:none;font-family:inherit;" /></td>
         <td class="thumb">${f.thumbnail ? `<button class="thumb-btn" data-trailer="${esc(f.trailerUrl)}"><img src="${esc(f.thumbnail)}" alt="" loading="lazy"><div class="thumb-play">▶</div></button>` : ''}</td>
         <td>
           <div class="ms" tabindex="0">
@@ -482,6 +519,10 @@ function renderPage() {
       });
       updateLabel(row.querySelector('.recognition-ms'));
 
+      // Title input
+      const titleInput = row.querySelector('.title-input');
+      if (titleInput) titleInput.addEventListener('input', () => scheduleSave(row));
+
       // Notes textarea
       const notesTa = row.querySelector('.notes-input');
       notesTa.addEventListener('input', () => scheduleSave(row));
@@ -660,6 +701,8 @@ function renderPage() {
 
     async function saveRow(row) {
       const slug        = row.dataset.slug;
+      const titleEl     = row.querySelector('.title-input');
+      const title       = titleEl ? titleEl.value : '';
       const role        = [...row.querySelectorAll('.ms-drop input:checked')].map(c => c.value).join(', ');
       const client      = row.querySelector('.client-select').value;
       const genre       = row.querySelector('.genre-select').value;
@@ -672,7 +715,7 @@ function renderPage() {
         const res = await fetch('/save', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ slug, role, client, genre, recognition, notes })
+          body: JSON.stringify({ slug, title, role, client, genre, recognition, notes })
         });
         status.textContent = res.ok ? '✓' : '✗';
         status.className   = 'status ' + (res.ok ? 'ok' : 'err');
@@ -743,8 +786,9 @@ http.createServer((req, res) => {
     req.on('data', d => { body += d; });
     req.on('end', () => {
       try {
-        const { slug, role, client, genre, recognition, notes } = JSON.parse(body);
-        const ok = saveFilm(slug, role, client, genre, recognition, notes);
+        const { slug, title, role, client, genre, recognition, notes } = JSON.parse(body);
+        const ok = saveFilm(slug, title, role, client, genre, recognition, notes);
+        if (ok) schedulePush();
         res.writeHead(ok ? 200 : 404, { 'Content-Type': 'application/json' });
         res.end(JSON.stringify({ ok }));
       } catch { res.writeHead(400); res.end(); }
@@ -758,6 +802,7 @@ http.createServer((req, res) => {
       try {
         const { thumbnail, title, role, client, notes } = JSON.parse(body);
         const ok = saveStill(thumbnail, title, role, client, notes);
+        if (ok) schedulePush();
         res.writeHead(ok ? 200 : 404, { 'Content-Type': 'application/json' });
         res.end(JSON.stringify({ ok }));
       } catch { res.writeHead(400); res.end(); }
