@@ -138,11 +138,16 @@ const portfolioData = [...filmItems, ...stillItems];
     wrap.appendChild(img);
 
     const ov = document.createElement('div');
-    ov.style.cssText = 'position:absolute;inset:0;background:linear-gradient(to top,rgba(0,0,0,0.82) 0%,rgba(0,0,0,0.38) 42%,rgba(0,0,0,0) 72%);opacity:0;transition:opacity 0.28s ease;z-index:2;display:flex;align-items:flex-end;padding:12px;';
+    ov.style.cssText = 'position:absolute;inset:0;background:linear-gradient(to top,rgba(0,0,0,0.82) 0%,rgba(0,0,0,0.38) 42%,rgba(0,0,0,0) 72%);opacity:0;transition:opacity 0.28s ease;z-index:2;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:12px;';
+
+    const playIcon = document.createElement('div');
+    playIcon.style.cssText = 'flex:1;display:flex;align-items:center;justify-content:center;';
+    playIcon.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="rgba(255,255,255,0.88)"><path d="M8 5v14l11-7z"/></svg>';
+    ov.appendChild(playIcon);
 
     const titleSpan = document.createElement('span');
     titleSpan.textContent = item.title;
-    titleSpan.style.cssText = 'font-family:Arial,Helvetica,sans-serif;font-size:0.78rem;color:rgba(255,255,255,0.92);line-height:1.4;transform:translateY(6px);transition:transform 0.28s ease,opacity 0.28s ease;opacity:0;';
+    titleSpan.style.cssText = 'width:100%;font-family:Arial,Helvetica,sans-serif;font-size:0.78rem;color:rgba(255,255,255,0.92);line-height:1.4;transform:translateY(6px);transition:transform 0.28s ease,opacity 0.28s ease;opacity:0;';
     ov.appendChild(titleSpan);
     wrap.appendChild(ov);
 
