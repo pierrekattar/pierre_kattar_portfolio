@@ -34,9 +34,6 @@ export const films: Film[] = [
     heroImage: "https://images.squarespace-cdn.com/content/v1/5e36b80361083b2de0d3ed2b/1771544193361-DE9L741IRYV8OMSO45BR/image-asset.jpeg",
     trailerUrl: "https://www.youtube.com/embed/-PvCHFWLSKY",
     gallery: [],
-    role: "Video Journalist",
-    client: "Self",
-    genre: "Breaking News",
     credits: [{ role: "Director of Photography", name: "Pierre Kattar" }],
   },
   {
@@ -1036,7 +1033,7 @@ export const films: Film[] = [
   },
   {
     slug: "no-war-with-iran-protests-dc",
-    title: '"No War with Iran" Protests in D.C.',
+    title: "\"No War with Iran\" Demonstration in D.C.",
     category: "documentary",
     logline: '"No War with Iran" Protests in D.C.',
     year: 2025,
@@ -1540,7 +1537,7 @@ export const films: Film[] = [
   },
   {
     slug: "niska-banja-roma-balkan-lab-orchestra",
-    title: "Niška Banja - Roma Balkan Lab Orchestra",
+    title: "Music video - Roma Balkan Lab Orchestra",
     category: "documentary",
     logline: "Niška Banja - Roma Balkan Lab Orchestra",
     year: 2021,
