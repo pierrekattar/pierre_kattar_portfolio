@@ -34,6 +34,7 @@ export const films: Film[] = [
     heroImage: "https://images.squarespace-cdn.com/content/v1/5e36b80361083b2de0d3ed2b/1771544193361-DE9L741IRYV8OMSO45BR/image-asset.jpeg",
     trailerUrl: "https://www.youtube.com/embed/-PvCHFWLSKY",
     gallery: [],
+    role: "Video Journalist",
     credits: [{ role: "Director of Photography", name: "Pierre Kattar" }],
   },
   {
