@@ -35,6 +35,7 @@ export const films: Film[] = [
     trailerUrl: "https://www.youtube.com/embed/-PvCHFWLSKY",
     gallery: [],
     role: "Video Journalist",
+    client: "Self",
     credits: [{ role: "Director of Photography", name: "Pierre Kattar" }],
   },
   {
