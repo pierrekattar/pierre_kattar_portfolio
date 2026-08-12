@@ -36,6 +36,7 @@ export const films: Film[] = [
     gallery: [],
     role: "Video Journalist",
     client: "Self",
+    genre: "News",
     credits: [{ role: "Director of Photography", name: "Pierre Kattar" }],
   },
   {
