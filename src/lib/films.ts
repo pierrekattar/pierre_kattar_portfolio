@@ -1537,7 +1537,7 @@ export const films: Film[] = [
   },
   {
     slug: "niska-banja-roma-balkan-lab-orchestra",
-    title: "Live: Roma Balkan Lab Orchestra Music Video",
+    title: "Live: Roma Balkan Lab Orchestra",
     category: "documentary",
     logline: "Niška Banja - Roma Balkan Lab Orchestra",
     year: 2021,
