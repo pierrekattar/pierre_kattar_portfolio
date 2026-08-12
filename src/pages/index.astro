@@ -102,7 +102,7 @@ const portfolioData = [...filmItems, ...stillItems];
   const modalInfo = document.getElementById('modal-info');
 
   function updatePageTitle() {
-    if (pageCategoryTitle) pageCategoryTitle.textContent = activeFilter;
+    if (pageCategoryTitle) pageCategoryTitle.textContent = activeSort ? activeSort.toUpperCase() : activeFilter;
   }
 
   // ── Sort buttons (toggle) ──
@@ -168,6 +168,7 @@ const portfolioData = [...filmItems, ...stillItems];
 
   // ── Grid builder ──
   function buildGrid() {
+    updatePageTitle();
     grid.innerHTML = '';
 
     if (!activeSort) {
