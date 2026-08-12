@@ -102,27 +102,24 @@ const subtitle = [
     img.style.cssText = 'position:absolute;inset:0;width:100%;height:100%;object-fit:cover;';
     wrap.appendChild(img);
 
-    if (item.type === 'film') {
-      const ov = document.createElement('div');
-      ov.style.cssText = 'position:absolute;inset:0;display:flex;align-items:center;justify-content:center;opacity:0;transition:opacity 0.3s;';
-      ov.innerHTML = '<img src="https://assets.squarespace.com/universal/images-v6/damask/play-button@2x.png" alt="" width="48" height="48">';
-      wrap.appendChild(ov);
-      btn.addEventListener('mouseenter', () => ov.style.opacity = '1');
-      btn.addEventListener('mouseleave', () => ov.style.opacity = '0');
-    } else {
-      const ov = document.createElement('div');
-      ov.style.cssText = 'position:absolute;inset:0;background:rgba(0,0,0,0);transition:background 0.3s;';
-      wrap.appendChild(ov);
-      btn.addEventListener('mouseenter', () => ov.style.background = 'rgba(0,0,0,0.3)');
-      btn.addEventListener('mouseleave', () => ov.style.background = 'rgba(0,0,0,0)');
-    }
+    const ov = document.createElement('div');
+    ov.style.cssText = 'position:absolute;inset:0;background:linear-gradient(to top,rgba(0,0,0,0.82) 0%,rgba(0,0,0,0.38) 42%,rgba(0,0,0,0) 72%);opacity:0;transition:opacity 0.28s ease;z-index:2;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:12px;';
+
+    const playIcon = document.createElement('div');
+    playIcon.style.cssText = 'flex:1;display:flex;align-items:center;justify-content:center;';
+    playIcon.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="rgba(255,255,255,0.88)"><path d="M8 5v14l11-7z"/></svg>';
+    ov.appendChild(playIcon);
+
+    const titleSpan = document.createElement('span');
+    titleSpan.textContent = item.title;
+    titleSpan.style.cssText = 'width:100%;font-family:Arial,Helvetica,sans-serif;font-size:1rem;color:rgba(255,255,255,0.92);line-height:1.4;transform:translateY(6px);transition:transform 0.28s ease,opacity 0.28s ease;opacity:0;';
+    ov.appendChild(titleSpan);
+    wrap.appendChild(ov);
+
+    btn.addEventListener('mouseenter', () => { ov.style.opacity = '1'; titleSpan.style.opacity = '1'; titleSpan.style.transform = 'translateY(0)'; });
+    btn.addEventListener('mouseleave', () => { ov.style.opacity = '0'; titleSpan.style.opacity = '0'; titleSpan.style.transform = 'translateY(6px)'; });
 
     btn.appendChild(wrap);
-
-    const label = document.createElement('p');
-    label.textContent = item.title;
-    label.style.cssText = 'margin:6px 0 0;font-family:Arial,Helvetica,sans-serif;font-size:0.8rem;color:rgba(255,255,255,0.85);line-height:1.4;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;';
-    btn.appendChild(label);
 
     btn.addEventListener('click', () => {
       if (item.type === 'film' && item.autoplayUrl.includes('nytimes.com')) {
