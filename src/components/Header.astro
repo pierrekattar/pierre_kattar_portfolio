@@ -128,7 +128,8 @@ const workLinks = [
 
   // Highlight the active filter link on the home page
   const params = new URLSearchParams(window.location.search);
-  const activeFilter = params.get('filter');
+  const isHome = window.location.pathname === '/';
+  const activeFilter = params.get('filter') || (isHome ? 'JOURNALISM' : null);
   if (activeFilter) {
     document.querySelectorAll<HTMLAnchorElement>('.nav-filter-link').forEach((link) => {
       if (link.dataset.filterLink === activeFilter) {
