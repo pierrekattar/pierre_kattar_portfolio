@@ -61,7 +61,7 @@ function parseFilms() {
     }
     if (!current) continue;
     let m;
-    if (!current.title     && (m = line.match(/^\s+title:\s*"([^"]+)"|^\s+title:\s*'([^']+)'/))) current.title = m[1] || m[2];
+    if (!current.title     && (m = line.match(/^\s+title:\s*"((?:[^"\\]|\\.)*)"|^\s+title:\s*'([^']+)'/))) current.title = m[1] !== undefined ? m[1].replace(/\\"/g, '"').replace(/\\\\/g, '\\') : m[2];
     if (!current.category  && (m = line.match(/^\s+category:\s*"(journalism|documentary|fun)"/))) current.category = m[1];
     if (!current.thumbnail  && (m = line.match(/^\s+thumbnail:\s*"([^"]+)"/)))                   current.thumbnail  = m[1];
     if (!current.trailerUrl && (m = line.match(/^\s+trailerUrl:\s*"([^"]+)"/)))                  current.trailerUrl = m[1];
