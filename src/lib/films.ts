@@ -1016,6 +1016,21 @@ export const films: Film[] = [
   },
   // Documentary
   {
+    slug: "hiroshima-nagasaki-nuclear-abolish",
+    title: "81 Years After Hiroshima and Nagasaki: A Call to Abolish Nuclear Weapons",
+    category: "documentary",
+    logline: "81 Years After Hiroshima and Nagasaki: A Call to Abolish Nuclear Weapons",
+    year: 2026,
+    synopsis: "",
+    thumbnail: "https://img.youtube.com/vi/8mfy4wyKdJY/maxresdefault.jpg",
+    heroImage: "https://img.youtube.com/vi/8mfy4wyKdJY/maxresdefault.jpg",
+    trailerUrl: "https://www.youtube.com/embed/8mfy4wyKdJY",
+    gallery: [],
+    role: "Video Journalist",
+    client: "Self",
+    credits: [{ role: "Director of Photography", name: "Pierre Kattar" }],
+  },
+  {
     slug: "the-brilliance-of-my-world",
     title: "The Brilliance of My World",
     category: "documentary",
