@@ -1033,7 +1033,7 @@ export const films: Film[] = [
   },
   {
     slug: "no-war-with-iran-protests-dc",
-    title: "\"No War with Iran\" Demonstrations in D.C.",
+    title: "\"No War with Iran\" Demonstration in D.C.",
     category: "documentary",
     logline: '"No War with Iran" Protests in D.C.',
     year: 2025,
