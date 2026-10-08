@@ -9,6 +9,20 @@ export interface Still {
 
 export const stills: Still[] = [
   {
+    title: 'Orsolya Székely, The World Bank Group',
+    category: 'interview-stills',
+    thumbnail: '/stills/orsolya-still-003.png',
+    role: 'Director of Photography',
+    client: 'The World Bank Group',
+  },
+  {
+    title: 'Orsolya Székely, The World Bank Group',
+    category: 'interview-stills',
+    thumbnail: '/stills/orsolya-still-007.png',
+    role: 'Director of Photography',
+    client: 'The World Bank Group',
+  },
+  {
     category: 'interview-stills',
     thumbnail: 'https://images.squarespace-cdn.com/content/v1/5e36b80361083b2de0d3ed2b/1737488826580-GA1URCVZR30B8602O6AO/GranholmInterview_FINAL_EDIT.00_04_58_19.Still011-2.png',
     title: 'Secretary of Energy, Jennifer Granholm',
