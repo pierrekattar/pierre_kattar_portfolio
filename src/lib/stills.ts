@@ -27,14 +27,14 @@ export const stills: Still[] = [
   {
     title: 'Orsolya Székely, The World Bank Group',
     category: 'interview-stills',
-    thumbnail: '/stills/orsolya-still-003.png',
+    thumbnail: '/stills/orsolya-still-007.png',
     role: 'Director of Photography',
     client: 'The World Bank Group',
   },
   {
     title: 'Orsolya Székely, The World Bank Group',
     category: 'interview-stills',
-    thumbnail: '/stills/orsolya-still-007.png',
+    thumbnail: '/stills/orsolya-still-003.png',
     role: 'Director of Photography',
     client: 'The World Bank Group',
   },
