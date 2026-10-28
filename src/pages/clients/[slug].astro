@@ -124,7 +124,7 @@ const subtitle = [
     btn.appendChild(wrap);
 
     btn.addEventListener('click', () => {
-      if (item.type === 'film' && item.autoplayUrl.includes('nytimes.com')) {
+      if (item.type === 'film' && !item.autoplayUrl.includes('youtube.com/embed')) {
         window.open(item.autoplayUrl, '_blank', 'noopener,noreferrer');
       } else {
         openModal(item);
@@ -168,7 +168,10 @@ const subtitle = [
       img.src = item.thumbnail;
       img.style.cssText = 'width:100%;height:100%;object-fit:contain;display:block;';
       modalPlayer.appendChild(img);
-    } else if (item.autoplayUrl.includes('nytimes.com')) {
+    } else if (!item.autoplayUrl.includes('youtube.com/embed')) {
+      const extLabel = item.autoplayUrl.includes('nytimes.com') ? 'Watch on The New York Times'
+        : item.autoplayUrl.includes('theoutlawocean.com') ? 'Read on The Outlaw Ocean Project'
+        : 'Open link';
       const wrap = document.createElement('div');
       wrap.style.cssText = 'position:relative;width:100%;height:100%;';
       const img = document.createElement('img');
@@ -179,7 +182,7 @@ const subtitle = [
       overlay.target = '_blank';
       overlay.rel = 'noopener noreferrer';
       overlay.style.cssText = 'position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;background:rgba(0,0,0,0.45);text-decoration:none;gap:1rem;';
-      overlay.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" width="56" height="56" viewBox="0 0 24 24" fill="rgba(255,255,255,0.9)"><path d="M8 5v14l11-7z"/></svg><span style="font-family:Arial,Helvetica,sans-serif;font-size:0.8rem;letter-spacing:0.15em;color:rgba(255,255,255,0.85);text-transform:uppercase;border-bottom:1px solid rgba(255,255,255,0.4);padding-bottom:2px;">Watch on The New York Times</span>';
+      overlay.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" width="56" height="56" viewBox="0 0 24 24" fill="rgba(255,255,255,0.9)"><path d="M8 5v14l11-7z"/></svg><span style="font-family:Arial,Helvetica,sans-serif;font-size:0.8rem;letter-spacing:0.15em;color:rgba(255,255,255,0.85);text-transform:uppercase;border-bottom:1px solid rgba(255,255,255,0.4);padding-bottom:2px;">${extLabel}</span>`;
       wrap.appendChild(img);
       wrap.appendChild(overlay);
       modalPlayer.appendChild(wrap);
