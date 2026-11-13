@@ -1212,6 +1212,21 @@ export const films: Film[] = [
     client: "The New York Times",
     credits: [{ role: "Director of Photography", name: "Pierre Kattar" }],
   },
+  {
+    slug: "supreme-court-new-term-nuclear-power-moon",
+    title: "The Supreme Court's New Term, and a Race for Nuclear Power on the Moon",
+    category: "journalism",
+    logline: "The Supreme Court's New Term, and a Race for Nuclear Power on the Moon",
+    year: 2026,
+    synopsis: "",
+    thumbnail: "https://static01.nyt.com/images/2026/10/05/multimedia/05themorning-scotus-fzlc/05themorning-scotus-fzlc-mediumSquareAt3X.jpg",
+    heroImage: "https://static01.nyt.com/images/2026/10/05/multimedia/05themorning-scotus-fzlc/05themorning-scotus-fzlc-mediumSquareAt3X.jpg",
+    trailerUrl: "https://www.nytimes.com/2026/10/05/podcasts/supreme-court-new-term-nuclear-power-moon.html",
+    gallery: [],
+    role: "Director of Photography",
+    client: "The New York Times",
+    credits: [{ role: "Director of Photography", name: "Pierre Kattar" }],
+  },
   // Documentary
   {
     slug: "hiroshima-nagasaki-nuclear-abolish",
