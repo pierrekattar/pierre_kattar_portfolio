@@ -1399,7 +1399,7 @@ export const films: Film[] = [
     heroImage: "https://images.squarespace-cdn.com/content/v1/5e36b80361083b2de0d3ed2b/1599648610953-1ZU5ISYLYWXV48LD1GDE/image-asset.jpeg",
     trailerUrl: "https://www.youtube.com/embed/c36kP3vp_kk",
     gallery: [],
-    role: "Director of Photography, Writer, Narrator",
+    role: "Director of Photography, Editor, Writer, Narrator",
     client: "The World Bank Group",
     genre: "Documentary Short",
     credits: [{ role: "Director of Photography", name: "Pierre Kattar" }],
@@ -2127,10 +2127,10 @@ export const films: Film[] = [
     heroImage: "https://img.youtube.com/vi/2ZJGxoF610c/maxresdefault.jpg",
     trailerUrl: "https://www.youtube.com/embed/2ZJGxoF610c",
     gallery: [],
-    role: "Director of Photography",
+    role: "Editor",
     client: "The World Bank Group",
     genre: "Documentary Short",
-    credits: [{ role: "Director of Photography", name: "Pierre Kattar" }],
+    credits: [{ role: "Editor", name: "Pierre Kattar" }],
   },
   // Fun
   {
